@@ -1,0 +1,31 @@
+
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>PROFILE</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    html,body{height:100%;margin:0}
+    body{
+      font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+      display:flex;align-items:center;justify-content:center;
+      background:#000 url('bg.jpg') center/cover no-repeat;
+      color:#fff;
+    }
+    .title{
+      font-size:40px;font-weight:800;letter-spacing:.2em;
+      text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.5);
+      padding:calc(env(safe-area-inset-top) + 8px) 16px calc(env(safe-area-inset-bottom) + 8px);
+    }
+  </style>
+</head>
+<body>
+  <div class="title">PROFILE</div>
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) { tg.ready(); tg.expand(); }
+  </script>
+</body>
+</html>
