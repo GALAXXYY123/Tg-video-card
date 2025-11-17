@@ -9,12 +9,30 @@
     html,body{height:100%;margin:0}
     body{
       font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      background:#000 url('bg.jpg') center/cover no-repeat;
       color:#000;
+      overflow: hidden; /* Убираем скролл у body */
     }
+    
+    /* Фоновые обои - фиксированные */
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:#000 url('bg.jpg') center/cover no-repeat;
+      z-index: -1; /* Под всем контентом */
+    }
+    
+    /* Основной контейнер */
+    .app-container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
     .title{
-      position:fixed;
-      top:0; left:0; right:0;
+      flex-shrink: 0; /* Запрещаем сжатие */
       z-index:10;
       text-align:center;
       font-size:40px;
@@ -26,9 +44,15 @@
       background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
     }
     
-    /* Контейнер для ленты видео */
+    /* Контейнер для ленты видео с прокруткой */
+    .video-feed-container {
+      flex: 1; /* Занимает всё оставшееся пространство */
+      overflow-y: auto; /* Включаем прокрутку только для ленты */
+      -webkit-overflow-scrolling: touch; /* Плавная прокрутка на iOS */
+    }
+    
+    /* Лента видео */
     .video-feed {
-      margin-top: 100px;
       padding: 0 16px 80px;
       display: flex;
       flex-direction: column;
@@ -44,7 +68,7 @@
       background: #000;
     }
     
-    .video-card:hover {
+    .video-card:active {
       transform: translateY(-5px);
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
     }
@@ -87,11 +111,19 @@
   </style>
 </head>
 <body>
-  <div class="title">POLYANA PROFILE</div>
+  <!-- Фиксированные обои -->
+  <div class="background"></div>
   
-  <!-- Лента видео -->
-  <div class="video-feed" id="videoFeed">
-    <!-- Видео будут добавляться автоматически -->
+  <!-- Основной контейнер -->
+  <div class="app-container">
+    <div class="title">POLYANA PROFILE</div>
+    
+    <!-- Контейнер с прокручиваемой лентой -->
+    <div class="video-feed-container">
+      <div class="video-feed" id="videoFeed">
+        <!-- Видео будут добавляться автоматически -->
+      </div>
+    </div>
   </div>
 
   <script>
