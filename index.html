@@ -23,26 +23,176 @@
       text-transform:uppercase;
       text-shadow:0 2px 8px rgba(0,0,0,.5);
       padding:calc(env(safe-area-inset-top) + 8px) 16px 12px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+    }
+    
+    /* Контейнер для ленты видео */
+    .video-feed {
+      margin-top: 100px;
+      padding: 0 16px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    
+    /* Стиль карточки с видео */
+    .video-card {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: #000;
+    }
+    
+    .video-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+    }
+    
+    /* Контейнер для видео */
+    .video-container {
+      position: relative;
+      width: 100%;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .video-container iframe {
+      width: 100%;
+      height: auto;
+      min-height: 200px;
+      max-height: 70vh;
+      border: 0;
+      display: block;
+    }
+    
+    /* Разные соотношения сторон */
+    .video-square {
+      aspect-ratio: 1 / 1;
+    }
+    
+    .video-portrait {
+      aspect-ratio: 9 / 16;
+    }
+    
+    .video-landscape {
+      aspect-ratio: 16 / 9;
+    }
+    
+    .video-cinema {
+      aspect-ratio: 21 / 9;
     }
   </style>
 </head>
 <body>
   <div class="title">POLYANA PROFILE</div>
+  
+  <!-- Лента видео -->
+  <div class="video-feed" id="videoFeed">
+    <!-- Видео будут добавляться автоматически -->
+  </div>
+
   <script>
     const tg = window.Telegram?.WebApp;
-    if (tg) { tg.ready(); tg.expand(); }
+    if (tg) { 
+      tg.ready(); 
+      tg.expand(); 
+    }
+
+    // ВСЕ ВАШИ ВИДЕО УЖЕ ВСТАВЛЕНЫ
+    const videoLinks = [
+      // Первое видео из изначального кода
+      {
+        url: "https://player.vimeo.com/video/1101236877",
+        aspect: "video-landscape"
+      },
+      // Ваши новые видео
+      {
+        url: "https://player.vimeo.com/video/1137811725",
+        aspect: "video-landscape"
+      },
+      {
+        url: "https://player.vimeo.com/video/1137818000", 
+        aspect: "video-portrait"
+      },
+      {
+        url: "https://player.vimeo.com/video/1137814296",
+        aspect: "video-landscape"
+      },
+      {
+        url: "https://player.vimeo.com/video/1137819132",
+        aspect: "video-portrait"
+      },
+      {
+        url: "https://player.vimeo.com/video/1137821627",
+        aspect: "video-square"
+      }
+    ];
+
+    // Функция для создания Vimeo URL с параметрами
+    function createVimeoUrl(videoUrl) {
+      const baseParams = "title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&autoplay=0";
+      const separator = videoUrl.includes('?') ? '&' : '?';
+      return `${videoUrl}${separator}${baseParams}`;
+    }
+
+    // Функция для создания карточки видео
+    function createVideoCard(videoData, index) {
+      return `
+        <div class="video-card">
+          <div class="video-container ${videoData.aspect}">
+            <iframe
+              src="${createVimeoUrl(videoData.url)}"
+              allow="fullscreen; picture-in-picture"
+              allowfullscreen
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin">
+            </iframe>
+          </div>
+        </div>
+      `;
+    }
+
+    // Функция для загрузки всех видео
+    function loadAllVideos() {
+      const videoFeed = document.getElementById('videoFeed');
+      
+      if (videoLinks.length === 0) {
+        videoFeed.innerHTML = '<div style="color: white; text-align: center; padding: 40px;">Нет видео для показа</div>';
+        return;
+      }
+      
+      videoFeed.innerHTML = videoLinks.map((video, index) => 
+        createVideoCard(video, index)
+      ).join('');
+    }
+
+    // Загружаем видео при загрузке страницы
+    document.addEventListener('DOMContentLoaded', loadAllVideos);
+
+    // Функции для управления видео (можно использовать позже)
+    window.addNewVideo = function(url, aspect = "video-landscape") {
+      videoLinks.push({url, aspect});
+      loadAllVideos();
+      console.log(`✅ Добавлено новое видео: ${url}`);
+    }
+
+    window.removeVideo = function(index) {
+      if (index >= 0 && index < videoLinks.length) {
+        const removed = videoLinks.splice(index, 1);
+        loadAllVideos();
+        console.log(`🗑️ Удалено видео: ${removed[0].url}`);
+      }
+    }
+
+    window.showVideoList = function() {
+      console.log("📹 Список видео:");
+      videoLinks.forEach((video, index) => {
+        console.log(`${index}: ${video.url} (${video.aspect})`);
+      });
+    }
   </script>
 </body>
-<section class="card" id="video" style="margin-top:120px; padding:16px;">
-  <div style="position:relative; width:100%; padding-top:56.25%; background:#000; border-radius:12px; overflow:hidden;">
-    <iframe
-      src="https://player.vimeo.com/video/1101236877?title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1"
-      style="position:absolute; inset:0; width:100%; height:100%; border:0;"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowfullscreen
-      loading="lazy"
-      referrerpolicy="strict-origin-when-cross-origin">
-    </iframe>
-  </div>
-</section>
-
+</html>
