@@ -10,7 +10,7 @@
     body{
       font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;
       color:#000;
-      overflow: hidden; /* Убираем скролл у body */
+      overflow: hidden;
     }
     
     /* Фоновые обои - фиксированные */
@@ -21,7 +21,7 @@
       width: 100%;
       height: 100%;
       background:#000 url('bg.jpg') center/cover no-repeat;
-      z-index: -1; /* Под всем контентом */
+      z-index: -1;
     }
     
     /* Основной контейнер */
@@ -32,7 +32,7 @@
     }
     
     .title{
-      flex-shrink: 0; /* Запрещаем сжатие */
+      flex-shrink: 0;
       z-index:10;
       text-align:center;
       font-size:40px;
@@ -46,9 +46,9 @@
     
     /* Контейнер для ленты видео с прокруткой */
     .video-feed-container {
-      flex: 1; /* Занимает всё оставшееся пространство */
-      overflow-y: auto; /* Включаем прокрутку только для ленты */
-      -webkit-overflow-scrolling: touch; /* Плавная прокрутка на iOS */
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     
     /* Лента видео */
@@ -69,11 +69,10 @@
     }
     
     .video-card:active {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+      transform: scale(0.98);
     }
     
-    /* Контейнер для видео */
+    /* Контейнер для видео - реальные размеры */
     .video-container {
       position: relative;
       width: 100%;
@@ -83,30 +82,51 @@
       align-items: center;
     }
     
+    /* Реальные размеры для разных форматов */
+    .video-square {
+      height: 80vw; /* Квадрат - почти на весь экран */
+      max-height: 80vh;
+    }
+    
+    .video-portrait {
+      height: 140vw; /* Портрет - высокий */
+      max-height: 140vh;
+    }
+    
+    .video-landscape {
+      height: 56.25vw; /* Ландшафт - 16:9 */
+      max-height: 56.25vh;
+    }
+    
+    .video-cinema {
+      height: 42.85vw; /* Кино - 21:9 */
+      max-height: 42.85vh;
+    }
+    
     .video-container iframe {
       width: 100%;
-      height: auto;
-      min-height: 200px;
-      max-height: 70vh;
+      height: 100%;
       border: 0;
       display: block;
     }
     
-    /* Разные соотношения сторон */
-    .video-square {
-      aspect-ratio: 1 / 1;
+    /* Индикатор полноэкранного режима */
+    .fullscreen-indicator {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
     }
     
-    .video-portrait {
-      aspect-ratio: 9 / 16;
-    }
-    
-    .video-landscape {
-      aspect-ratio: 16 / 9;
-    }
-    
-    .video-cinema {
-      aspect-ratio: 21 / 9;
+    .video-card:hover .fullscreen-indicator {
+      opacity: 1;
     }
   </style>
 </head>
@@ -163,9 +183,9 @@
       }
     ];
 
-    // Функция для создания Vimeo URL с параметрами
+    // Функция для создания Vimeo URL с полноэкранным режимом
     function createVimeoUrl(videoUrl) {
-      const baseParams = "title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&autoplay=0";
+      const baseParams = "title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&autoplay=0&background=0";
       const separator = videoUrl.includes('?') ? '&' : '?';
       return `${videoUrl}${separator}${baseParams}`;
     }
@@ -175,12 +195,14 @@
       return `
         <div class="video-card">
           <div class="video-container ${videoData.aspect}">
+            <div class="fullscreen-indicator">Нажми для полноэкранного режима</div>
             <iframe
               src="${createVimeoUrl(videoData.url)}"
-              allow="fullscreen; picture-in-picture"
+              allow="fullscreen; picture-in-picture; autoplay"
               allowfullscreen
               loading="lazy"
-              referrerpolicy="strict-origin-when-cross-origin">
+              referrerpolicy="strict-origin-when-cross-origin"
+              data-video-index="${index}">
             </iframe>
           </div>
         </div>
@@ -199,12 +221,51 @@
       videoFeed.innerHTML = videoLinks.map((video, index) => 
         createVideoCard(video, index)
       ).join('');
+      
+      // Добавляем обработчики для полноэкранного режима
+      addFullscreenHandlers();
+    }
+
+    // Функция для перехода в полноэкранный режим
+    function enterFullscreen(iframe) {
+      // Vimeo автоматически переходит в полноэкранный режим при клике
+      // Создаем искусственный клик на iframe
+      iframe.requestFullscreen?.().catch(() => {});
+      
+      // Фокус на iframe для активации элементов управления Vimeo
+      iframe.focus();
+    }
+
+    // Добавляем обработчики кликов для полноэкранного режима
+    function addFullscreenHandlers() {
+      const iframes = document.querySelectorAll('iframe');
+      const videoCards = document.querySelectorAll('.video-card');
+      
+      videoCards.forEach((card, index) => {
+        card.addEventListener('click', function(e) {
+          // Если клик не на самом iframe (где уже есть свои контролы)
+          if (!e.target.closest('iframe')) {
+            const iframe = this.querySelector('iframe');
+            enterFullscreen(iframe);
+          }
+        });
+      });
     }
 
     // Загружаем видео при загрузке страницы
     document.addEventListener('DOMContentLoaded', loadAllVideos);
 
-    // Функции для управления видео (можно использовать позже)
+    // Обработка изменения полноэкранного режима
+    document.addEventListener('fullscreenchange', function() {
+      if (!document.fullscreenElement) {
+        // Выход из полноэкранного режима
+        document.querySelectorAll('iframe').forEach(iframe => {
+          iframe.blur();
+        });
+      }
+    });
+
+    // Функции для управления видео
     window.addNewVideo = function(url, aspect = "video-landscape") {
       videoLinks.push({url, aspect});
       loadAllVideos();
