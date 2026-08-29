@@ -2,19 +2,28 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>POLYANA | Video Editor</title>
   
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a1a1a' width='100' height='100' rx='20'/><path fill='%23fff' d='M35 35h30v30H35V35zm-5 10h5v5h-5v-5zm35 0h5v5h-5v-5z'/><circle fill='none' stroke='%23fff' stroke-width='3' cx='50' cy='50' r='20'/></svg>">
   
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     html, body {
       height: 100%;
       margin: 0;
       background-color: #ffffff;
-      font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       color: #111;
+      -webkit-font-smoothing: antialiased;
+      overscroll-behavior: none;
     }
 
     .app-container {
@@ -22,6 +31,8 @@
       margin: 0 auto;
       padding-bottom: 120px;
       min-height: 100vh;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: calc(120px + env(safe-area-inset-bottom));
     }
 
     .header {
@@ -44,6 +55,7 @@
       cursor: pointer;
       user-select: none;
       transition: transform 0.2s;
+      -webkit-tap-highlight-color: transparent;
     }
     
     .logo-icon:active {
@@ -96,6 +108,7 @@
     .ratio-landscape { aspect-ratio: 16/9; }
     .ratio-portrait { aspect-ratio: 9/16; max-height: 75vh; }
     .ratio-square { aspect-ratio: 1/1; }
+    .ratio-4-3 { aspect-ratio: 4/3; }
 
     iframe {
       width: 100%;
@@ -118,18 +131,19 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      width: 32px;
-      height: 32px;
+      width: 44px;
+      height: 44px;
       background: rgba(255,0,0,0.9);
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       color: white;
-      font-size: 18px;
+      font-size: 24px;
       cursor: pointer;
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 10;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .delete-btn:hover {
@@ -157,6 +171,8 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.2);
       transition: all 0.3s ease;
       z-index: 100;
+      bottom: calc(30px + env(safe-area-inset-bottom));
+      -webkit-tap-highlight-color: transparent;
     }
 
     .tg-button:hover {
@@ -170,7 +186,7 @@
       fill: #fff;
     }
 
-    /* Панель пароля - стиль старого монитора */
+    /* Панель пароля - адаптирована под iPhone */
     .password-panel {
       display: none;
       position: fixed;
@@ -181,6 +197,7 @@
       background: #fff;
       z-index: 1000;
       overflow: hidden;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
 
     .password-panel.active {
@@ -240,19 +257,19 @@
       background: #fff;
       border: 3px solid #000;
       border-radius: 20px;
-      padding: 40px;
-      max-width: 500px;
-      width: 90%;
+      padding: 30px 25px;
+      max-width: 450px;
+      width: 95%;
       box-shadow: 0 0 0 1px #000, 0 20px 60px rgba(0,0,0,0.2);
     }
 
     .password-title {
-      font-size: 32px;
+      font-size: 24px;
       font-weight: 900;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       position: relative;
       animation: glitchText 2s infinite;
     }
@@ -277,13 +294,13 @@
     }
 
     .password-input-wrapper {
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
 
     .password-input {
       width: 100%;
-      padding: 20px;
-      font-size: 24px;
+      padding: 18px;
+      font-size: 16px; /* 16px чтобы iPhone не зумил */
       font-weight: 600;
       text-align: center;
       letter-spacing: 0.2em;
@@ -291,8 +308,9 @@
       border-radius: 12px;
       background: #fff;
       color: #000;
-      font-family: 'Courier New', monospace;
+      font-family: inherit;
       box-sizing: border-box;
+      -webkit-appearance: none;
     }
 
     .password-input:focus {
@@ -308,34 +326,32 @@
 
     .password-btn {
       width: 100%;
-      padding: 20px;
+      padding: 18px;
       background: #000;
       color: #fff;
       border: none;
       border-radius: 12px;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.3s;
-    }
-
-    .password-btn:hover {
-      background: #333;
-      transform: translateY(-2px);
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .password-btn:active {
-      transform: translateY(0);
+      background: #333;
+      transform: scale(0.98);
     }
 
     .close-password {
       position: absolute;
       top: 20px;
       right: 20px;
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       background: #000;
       border: none;
       border-radius: 10px;
@@ -343,6 +359,7 @@
       font-size: 24px;
       cursor: pointer;
       z-index: 3;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .error-message {
@@ -352,6 +369,7 @@
       margin-top: 20px;
       display: none;
       animation: shake 0.5s;
+      font-size: 14px;
     }
 
     @keyframes shake {
@@ -360,7 +378,7 @@
       75% { transform: translateX(10px); }
     }
 
-    /* Админ-панель */
+    /* Админ-панель - адаптирована под iPhone */
     .admin-panel {
       display: none;
       position: fixed;
@@ -371,7 +389,8 @@
       background: #fff;
       z-index: 1001;
       overflow-y: auto;
-      padding: 20px;
+      -webkit-overflow-scrolling: touch;
+      padding: calc(env(safe-area-inset-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 20px);
       box-sizing: border-box;
     }
 
@@ -385,32 +404,33 @@
       background: #fff;
       border: 3px solid #000;
       border-radius: 20px;
-      padding: 30px;
+      padding: 25px 20px;
     }
 
     .admin-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
 
     .admin-header h2 {
       margin: 0;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 800;
       letter-spacing: 0.05em;
     }
 
     .close-btn {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       background: #000;
       border: none;
       border-radius: 10px;
       color: #fff;
       font-size: 24px;
       cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .form-group {
@@ -427,12 +447,13 @@
     .form-group input,
     .form-group select {
       width: 100%;
-      padding: 12px;
+      padding: 16px;
       border: 2px solid #000;
-      border-radius: 10px;
-      font-size: 16px;
+      border-radius: 12px;
+      font-size: 16px; /* 16px чтобы iPhone не зумил */
       box-sizing: border-box;
       font-family: inherit;
+      -webkit-appearance: none;
     }
 
     .form-group input:focus,
@@ -444,7 +465,7 @@
 
     .add-btn {
       width: 100%;
-      padding: 16px;
+      padding: 18px;
       background: #000;
       color: #fff;
       border: none;
@@ -453,10 +474,13 @@
       font-weight: 600;
       cursor: pointer;
       margin-bottom: 20px;
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .add-btn:hover {
+    .add-btn:active {
       background: #333;
+      transform: scale(0.98);
     }
 
     .video-list {
@@ -468,7 +492,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px;
+      padding: 14px;
       background: #f5f5f5;
       border: 2px solid #000;
       border-radius: 10px;
@@ -477,11 +501,15 @@
 
     .video-list-item-info {
       flex: 1;
+      min-width: 0;
     }
 
     .video-list-item-title {
       font-weight: 600;
       font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .video-list-item-url {
@@ -494,14 +522,17 @@
     }
 
     .video-list-item-delete {
-      width: 32px;
-      height: 32px;
+      width: 44px;
+      height: 44px;
       background: #ff0000;
       border: 2px solid #000;
-      border-radius: 8px;
+      border-radius: 10px;
       color: #fff;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 20px;
+      margin-left: 10px;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
     }
 
     .export-import {
@@ -515,7 +546,7 @@
     .export-btn,
     .import-btn {
       flex: 1;
-      padding: 12px;
+      padding: 16px;
       border: 2px solid #000;
       border-radius: 10px;
       background: #fff;
@@ -523,11 +554,41 @@
       font-weight: 600;
       cursor: pointer;
       font-size: 14px;
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .export-btn:hover,
-    .import-btn:hover {
+    .export-btn:active,
+    .import-btn:active {
       background: #f0f0f0;
+      transform: scale(0.98);
+    }
+
+    /* Адаптация для маленьких экранов iPhone */
+    @media screen and (max-width: 375px) {
+      .password-title {
+        font-size: 20px;
+      }
+      
+      .admin-header h2 {
+        font-size: 18px;
+      }
+      
+      .video-list-item {
+        padding: 12px;
+      }
+    }
+
+    /* Для iPad и больших экранов */
+    @media screen and (min-width: 768px) {
+      .password-content {
+        padding: 40px;
+        width: 90%;
+      }
+      
+      .admin-content {
+        padding: 30px;
+      }
     }
   </style>
 </head>
@@ -581,7 +642,7 @@
       <button class="password-btn" onclick="checkPassword()">ВОЙТИ</button>
       
       <div class="error-message" id="errorMessage">
-        ❌ НЕВЕРНЫЙ ПАРОЛЬ
+        НЕВЕРНЫЙ ПАРОЛЬ
       </div>
     </div>
   </div>
@@ -590,7 +651,7 @@
   <div class="admin-panel" id="adminPanel">
     <div class="admin-content">
       <div class="admin-header">
-        <h2>🎬 УПРАВЛЕНИЕ ВИДЕО</h2>
+        <h2>УПРАВЛЕНИЕ ВИДЕО</h2>
         <button class="close-btn" onclick="closeAdmin()">✕</button>
       </div>
 
@@ -610,16 +671,17 @@
           <option value="ratio-portrait">Вертикальное (9:16)</option>
           <option value="ratio-landscape">Горизонтальное (16:9)</option>
           <option value="ratio-square">Квадратное (1:1)</option>
+          <option value="ratio-4-3">Классическое (4:3)</option>
         </select>
       </div>
 
-      <button class="add-btn" onclick="addVideo()"> ДОБАВИТЬ ВИДЕО</button>
+      <button class="add-btn" onclick="addVideo()">ДОБАВИТЬ ВИДЕО</button>
 
       <div class="video-list" id="videoList"></div>
 
       <div class="export-import">
-        <button class="export-btn" onclick="exportData()">📥 ЭКСПОРТ JSON</button>
-        <button class="import-btn" onclick="document.getElementById('importFile').click()">📤 ИМПОРТ JSON</button>
+        <button class="export-btn" onclick="exportData()">ЭКСПОРТ JSON</button>
+        <button class="import-btn" onclick="document.getElementById('importFile').click()">ИМПОРТ JSON</button>
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
       </div>
     </div>
@@ -640,10 +702,11 @@
 
     let otherVideos = JSON.parse(localStorage.getItem('polyanaVideos')) || [
       { url: "https://player.vimeo.com/video/1222328524", aspect: "ratio-portrait", title: "SABOTAGE HHHB", id: Date.now() + 1 },
-      { url: "https://player.vimeo.com/video/1137811725", aspect: "ratio-landscape", title: "Tattoo Process / Karma", id: Date.now() + 2 },
-      { url: "https://player.vimeo.com/video/1137818000", aspect: "ratio-portrait", title: "Underground / Lifestyle", id: Date.now() + 3 },
-      { url: "https://player.vimeo.com/video/1137814296", aspect: "ratio-landscape", title: "Tattoo Session / Details", id: Date.now() + 4 },
-      { url: "https://player.vimeo.com/video/1137821627", aspect: "ratio-square", title: "Bar & Food / Reels", id: Date.now() + 5 }
+      { url: "https://player.vimeo.com/video/1222329449", aspect: "ratio-portrait", title: "SVADBA KREEM", id: Date.now() + 2 },
+      { url: "https://player.vimeo.com/video/1137811725", aspect: "ratio-landscape", title: "Tattoo Process / Karma", id: Date.now() + 3 },
+      { url: "https://player.vimeo.com/video/1137818000", aspect: "ratio-portrait", title: "Underground / Lifestyle", id: Date.now() + 4 },
+      { url: "https://player.vimeo.com/video/1137814296", aspect: "ratio-landscape", title: "Tattoo Session / Details", id: Date.now() + 5 },
+      { url: "https://player.vimeo.com/video/1137821627", aspect: "ratio-square", title: "Bar & Food / Reels", id: Date.now() + 6 }
     ];
 
     let videoLinks = [];
@@ -689,7 +752,6 @@
         return;
       }
 
-      // unshift добавляет видео в НАЧАЛО массива (сразу после AI)
       otherVideos.unshift({
         url,
         title,
@@ -795,10 +857,10 @@
             saveVideos();
             loadAllVideos();
             updateVideoList();
-            alert('✅ Видео импортированы!');
+            alert('Видео импортированы!');
           }
         } catch (err) {
-          alert('❌ Ошибка чтения файла');
+          alert('Ошибка чтения файла');
         }
       };
       reader.readAsText(file);
