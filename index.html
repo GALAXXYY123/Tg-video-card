@@ -7,7 +7,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>POLYANA | Video Editor</title>
   
-  <!-- Официальный скрипт Mave.io для корректного автоплея -->
   <script type="module" src="https://cdn.video-dns.com/npm/@maveio/components/+esm"></script>
   
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a1a1a' width='100' height='100' rx='20'/><path fill='%23fff' d='M35 35h30v30H35V35zm-5 10h5v5h-5v-5zm35 0h5v5h-5v-5z'/><circle fill='none' stroke='%23fff' stroke-width='3' cx='50' cy='50' r='20'/></svg>">
@@ -73,99 +72,35 @@
     .tg-button:active { transform: translateX(-50%) scale(0.95); background: #333; }
     .tg-icon { width: 28px; height: 28px; fill: #fff; }
 
-    .password-panel {
+    .password-panel, .admin-panel {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: #fff; z-index: 1000; overflow: hidden;
-      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      background: #fff; z-index: 1000; overflow-y: auto;
+      padding: calc(env(safe-area-inset-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 20px);
     }
-    .password-panel.active { display: flex; align-items: center; justify-content: center; }
-    .crt-effect {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.03), rgba(0,0,0,0.03) 1px, transparent 1px, transparent 2px);
-      pointer-events: none; z-index: 1;
-    }
-    .glitch-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; }
-    .glitch-line {
-      position: absolute; width: 100%; height: 2px; background: rgba(0,0,0,0.1);
-      animation: glitchMove 3s infinite;
-    }
-    .glitch-line:nth-child(1) { top: 20%; animation-delay: 0s; }
-    .glitch-line:nth-child(2) { top: 40%; animation-delay: 0.5s; }
-    .glitch-line:nth-child(3) { top: 60%; animation-delay: 1s; }
-    .glitch-line:nth-child(4) { top: 80%; animation-delay: 1.5s; }
-    @keyframes glitchMove {
-      0%, 100% { transform: translateX(0); opacity: 0.3; }
-      50% { transform: translateX(-10px); opacity: 0.6; }
-    }
+    .password-panel.active, .admin-panel.active { display: block; }
     .password-content {
-      position: relative; z-index: 2; background: #fff; border: 3px solid #000;
-      border-radius: 20px; padding: 30px 25px; max-width: 450px; width: 95%;
-      box-shadow: 0 0 0 1px #000, 0 20px 60px rgba(0,0,0,0.2);
+      max-width: 450px; margin: 100px auto; background: #fff; border: 3px solid #000;
+      border-radius: 20px; padding: 30px 25px;
     }
     .password-title {
       font-size: 24px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase;
-      text-align: center; margin-bottom: 30px; position: relative; animation: glitchText 2s infinite;
-    }
-    @keyframes glitchText {
-      0%, 90%, 100% { text-shadow: none; transform: translate(0); }
-      92% { text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; transform: translate(-2px, 0); }
-      94% { text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; transform: translate(2px, 0); }
-      96% { text-shadow: none; transform: translate(0); }
+      text-align: center; margin-bottom: 30px;
     }
     .password-input {
       width: 100%; padding: 18px; font-size: 16px; font-weight: 600; text-align: center;
       letter-spacing: 0.2em; border: 3px solid #000; border-radius: 12px; background: #fff;
-      color: #000; font-family: inherit; box-sizing: border-box; -webkit-appearance: none;
-      margin-bottom: 25px;
+      color: #000; font-family: inherit; margin-bottom: 25px;
     }
-    .password-input:focus { outline: none; border-color: #000; box-shadow: 0 0 0 4px rgba(0,0,0,0.1); }
-    .password-btn {
+    .password-btn, .add-btn, .close-btn, .export-btn, .import-btn, .reset-btn {
       width: 100%; padding: 18px; background: #000; color: #fff; border: none;
-      border-radius: 12px; font-size: 16px; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; cursor: pointer; -webkit-appearance: none;
-    }
-    .password-btn:active { background: #333; transform: scale(0.98); }
-    .close-password {
-      position: absolute; top: 20px; right: 20px; width: 44px; height: 44px;
-      background: #000; border: none; border-radius: 10px; color: #fff;
-      font-size: 24px; cursor: pointer; z-index: 3;
-    }
-    .error-message {
-      text-align: center; color: #ff0000; font-weight: 600; margin-top: 20px;
-      display: none; animation: shake 0.5s; font-size: 14px;
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); }
-    }
-
-    .admin-panel {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: #fff; z-index: 1001; overflow-y: auto; -webkit-overflow-scrolling: touch;
-      padding: calc(env(safe-area-inset-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 20px);
-    }
-    .admin-panel.active { display: block; }
-    .admin-content {
-      max-width: 600px; margin: 0 auto; background: #fff; border: 3px solid #000;
-      border-radius: 20px; padding: 25px 20px;
-    }
-    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-    .admin-header h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 0.05em; }
-    .close-btn {
-      width: 44px; height: 44px; background: #000; border: none; border-radius: 10px;
-      color: #fff; font-size: 24px; cursor: pointer;
+      border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-bottom: 10px;
     }
     .form-group { margin-bottom: 20px; }
     .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
     .form-group input, .form-group select {
       width: 100%; padding: 16px; border: 2px solid #000; border-radius: 12px;
-      font-size: 16px; box-sizing: border-box; font-family: inherit; -webkit-appearance: none;
+      font-size: 16px; box-sizing: border-box; font-family: inherit;
     }
-    .form-group input:focus, .form-group select:focus { outline: none; border-color: #000; box-shadow: 0 0 0 4px rgba(0,0,0,0.1); }
-    .add-btn {
-      width: 100%; padding: 18px; background: #000; color: #fff; border: none;
-      border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 20px;
-    }
-    .add-btn:active { background: #333; transform: scale(0.98); }
     .video-list { border-top: 2px solid #000; padding-top: 20px; }
     .video-list-item {
       display: flex; justify-content: space-between; align-items: center;
@@ -177,16 +112,6 @@
     .video-list-item-delete {
       width: 44px; height: 44px; background: #ff0000; border: 2px solid #000; border-radius: 10px;
       color: #fff; cursor: pointer; font-size: 20px; margin-left: 10px; flex-shrink: 0;
-    }
-    .export-import { display: flex; gap: 10px; margin-top: 20px; padding-top: 20px; border-top: 2px solid #000; }
-    .export-btn, .import-btn {
-      flex: 1; padding: 16px; border: 2px solid #000; border-radius: 10px; background: #fff;
-      color: #000; font-weight: 600; cursor: pointer; font-size: 14px;
-    }
-    .export-btn:active, .import-btn:active { background: #f0f0f0; transform: scale(0.98); }
-    .reset-btn {
-      width: 100%; padding: 12px; margin-top: 10px; background: #fff; color: #ff0000; 
-      border: 2px solid #ff0000; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 14px;
     }
   </style>
 </head>
@@ -208,26 +133,22 @@
   </a>
 
   <div class="password-panel" id="passwordPanel">
-    <div class="glitch-bg"><div class="glitch-line"></div><div class="glitch-line"></div><div class="glitch-line"></div><div class="glitch-line"></div></div>
-    <div class="crt-effect"></div>
-    <button class="close-password" onclick="closePassword()">✕</button>
     <div class="password-content">
       <h2 class="password-title">ПАНЕЛЬ УПРАВЛЕНИЯ</h2>
       <input type="password" class="password-input" id="passwordInput" placeholder="ВВЕДИТЕ ПАРОЛЬ" autocomplete="off">
       <button class="password-btn" onclick="checkPassword()">ВОЙТИ</button>
-      <div class="error-message" id="errorMessage">НЕВЕРНЫЙ ПАРОЛЬ</div>
     </div>
   </div>
 
   <div class="admin-panel" id="adminPanel">
-    <div class="admin-content">
-      <div class="admin-header">
-        <h2>УПРАВЛЕНИЕ ВИДЕО</h2>
-        <button class="close-btn" onclick="closeAdmin()">✕</button>
+    <div style="max-width: 600px; margin: 0 auto; background: #fff; border: 3px solid #000; border-radius: 20px; padding: 25px 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h2 style="margin: 0; font-size: 20px; font-weight: 800;">УПРАВЛЕНИЕ ВИДЕО</h2>
+        <button class="close-btn" onclick="closeAdmin()" style="width: 44px; height: 44px; margin: 0;">✕</button>
       </div>
       <div class="form-group">
         <label>Ссылка на видео (Vimeo / Cloudinary / YouTube / Mave)</label>
-        <input type="text" id="videoUrl" placeholder="Вставь ссылку или embed ID">
+        <input type="text" id="videoUrl" placeholder="Вставь ссылку">
       </div>
       <div class="form-group">
         <label>Название</label>
@@ -244,12 +165,12 @@
       </div>
       <button class="add-btn" onclick="addVideo()">ДОБАВИТЬ ВИДЕО</button>
       <div class="video-list" id="videoList"></div>
-      <div class="export-import">
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
         <button class="export-btn" onclick="exportData()">ЭКСПОРТ JSON</button>
         <button class="import-btn" onclick="document.getElementById('importFile').click()">ИМПОРТ JSON</button>
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
       </div>
-      <button class="reset-btn" onclick="resetVideos()">СБРОСИТЬ ВСЕ ВИДЕО К ЗАВОДСКИМ</button>
+      <button class="reset-btn" onclick="resetVideos()">СБРОСИТЬ ВСЕ ВИДЕО</button>
     </div>
   </div>
 
@@ -258,9 +179,7 @@
     if (tg) { tg.ready(); tg.expand(); }
 
     const PASSWORD = 'HUB2026';
-    
     const aiVideo = { url: "https://player.vimeo.com/video/1137819132", aspect: "ratio-landscape", title: "AI Motion / Experimental", id: 'ai' };
-
     const defaultVideos = [
       { url: "https://player.vimeo.com/video/1222329449?h=8d7a524287", aspect: "ratio-4-3", title: "SVADBA KREEM", id: 'svadba' },
       { url: "https://player.vimeo.com/video/1222328524", aspect: "ratio-portrait", title: "SABOTAGE HHHB", id: 'sabotage' },
@@ -283,12 +202,6 @@
       return 'unknown';
     }
 
-    function getMaveEmbedId(url) {
-      if (url.includes('embed="')) return url.split('embed="')[1].split('"')[0];
-      if (url.includes('/videos/')) return url.split('/videos/')[1].split('?')[0];
-      return url.trim();
-    }
-
     function loadAllVideos() {
       videoLinks = [aiVideo, ...otherVideos];
       const feed = document.getElementById('videoFeed');
@@ -305,20 +218,9 @@
                   <source src="${video.url}" type="video/mp4">
                 </video>
               ` : type === 'mave' ? `
-                <!-- Официальный компонент Mave с гарантированным автоплеем -->
-                <mave-player 
-                  embed="${getMaveEmbedId(video.url)}" 
-                  autoplay="always" 
-                  muted="1"
-                  style="display: block; width: 100%; height: 100%; object-fit: cover;"
-                ></mave-player>
+                <mave-player embed="${video.url}" autoplay="always" muted="1" style="display: block; width: 100%; height: 100%;"></mave-player>
               ` : `
-                <iframe 
-                  src="${video.url}" 
-                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media" 
-                  allowfullscreen 
-                  loading="lazy">
-                </iframe>
+                <iframe src="${video.url}" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen loading="lazy"></iframe>
               `}
             </div>
             <div class="caption">${video.title}</div>
@@ -349,7 +251,7 @@
     }
 
     function resetVideos() {
-      if(confirm('Это удалит все добавленные видео и вернет стандартный набор. Продолжить?')) {
+      if(confirm('Сбросить все видео?')) {
         localStorage.removeItem('polyanaVideos');
         otherVideos = [...defaultVideos];
         saveVideos(); loadAllVideos(); updateVideoList();
@@ -359,9 +261,7 @@
 
     function updateVideoList() {
       const list = document.getElementById('videoList');
-      if (otherVideos.length === 0) {
-        list.innerHTML = '<p style="text-align:center;color:#999;">Нет видео</p>'; return;
-      }
+      if (otherVideos.length === 0) { list.innerHTML = '<p style="text-align:center;color:#999;">Нет видео</p>'; return; }
       list.innerHTML = otherVideos.map(video => `
         <div class="video-list-item">
           <div class="video-list-item-info">
@@ -373,38 +273,17 @@
       `).join('');
     }
 
-    function openPassword() {
-      document.getElementById('passwordPanel').classList.add('active');
-      setTimeout(() => document.getElementById('passwordInput').focus(), 100);
-    }
-    function closePassword() {
-      document.getElementById('passwordPanel').classList.remove('active');
-      document.getElementById('passwordInput').value = '';
-      document.getElementById('errorMessage').style.display = 'none';
-    }
+    function openPassword() { document.getElementById('passwordPanel').classList.add('active'); }
+    function closePassword() { document.getElementById('passwordPanel').classList.remove('active'); document.getElementById('passwordInput').value = ''; }
     function checkPassword() {
-      if (document.getElementById('passwordInput').value === PASSWORD) {
-        closePassword(); openAdmin();
-      } else {
-        document.getElementById('errorMessage').style.display = 'block';
-        document.getElementById('passwordInput').value = '';
-        setTimeout(() => { document.getElementById('errorMessage').style.display = 'none'; }, 2000);
-      }
+      if (document.getElementById('passwordInput').value === PASSWORD) { closePassword(); openAdmin(); }
+      else { alert('Неверный пароль'); document.getElementById('passwordInput').value = ''; }
     }
-    function openAdmin() {
-      document.getElementById('adminPanel').classList.add('active');
-      document.body.classList.add('admin-mode');
-      updateVideoList();
-    }
-    function closeAdmin() {
-      document.getElementById('adminPanel').classList.remove('active');
-      document.body.classList.remove('admin-mode');
-    }
-
+    function openAdmin() { document.getElementById('adminPanel').classList.add('active'); document.body.classList.add('admin-mode'); updateVideoList(); }
+    function closeAdmin() { document.getElementById('adminPanel').classList.remove('active'); document.body.classList.remove('admin-mode'); }
     function exportData() {
       const blob = new Blob([JSON.stringify(otherVideos, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-      a.download = 'polyana-videos.json'; a.click();
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'polyana-videos.json'; a.click();
     }
     function importData(event) {
       const file = event.target.files[0]; if (!file) return;
