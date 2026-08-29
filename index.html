@@ -185,14 +185,6 @@
       width: 100%; padding: 12px; margin-top: 10px; background: #fff; color: #ff0000; 
       border: 2px solid #ff0000; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 14px;
     }
-    .platform-badge {
-      display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px;
-      font-weight: 700; text-transform: uppercase; margin-left: 8px;
-    }
-    .badge-vimeo { background: #1ab7ea; color: #fff; }
-    .badge-cloudinary { background: #3448c5; color: #fff; }
-    .badge-youtube { background: #ff0000; color: #fff; }
-    .badge-default { background: #999; color: #fff; }
   </style>
 </head>
 <body>
@@ -228,7 +220,7 @@
     <div class="admin-content">
       <div class="admin-header">
         <h2>УПРАВЛЕНИЕ ВИДЕО</h2>
-        <button class="close-btn" onclick="closeAdmin()"></button>
+        <button class="close-btn" onclick="closeAdmin()">✕</button>
       </div>
       <div class="form-group">
         <label>Ссылка на видео (Vimeo / Cloudinary / YouTube)</label>
@@ -280,7 +272,6 @@
     let logoClickCount = 0;
     let logoClickTimer = null;
 
-    // Определяем тип видео и создаём правильный src
     function getVideoType(url) {
       if (url.includes('cloudinary.com')) return 'cloudinary';
       if (url.includes('youtube.com') || url.includes('youtu.be')) return 'youtube';
@@ -292,7 +283,7 @@
       const type = getVideoType(url);
       
       if (type === 'cloudinary') {
-        return url; // Прямая ссылка на MP4
+        return url;
       }
       
       if (type === 'vimeo') {
@@ -315,17 +306,6 @@
       }
       
       return url;
-    }
-
-    function getPlatformBadge(url) {
-      const type = getVideoType(url);
-      const badges = {
-        'vimeo': '<span class="platform-badge badge-vimeo">Vimeo</span>',
-        'cloudinary': '<span class="platform-badge badge-cloudinary">Cloudinary</span>',
-        'youtube': '<span class="platform-badge badge-youtube">YouTube</span>',
-        'unknown': '<span class="platform-badge badge-default">Direct</span>'
-      };
-      return badges[type] || badges['unknown'];
     }
 
     function loadAllVideos() {
@@ -360,10 +340,7 @@
                 </iframe>
               `}
             </div>
-            <div class="caption">
-              ${video.title}
-              ${getPlatformBadge(video.url)}
-            </div>
+            <div class="caption">${video.title}</div>
           </div>
         `;
       }).join('');
@@ -409,7 +386,7 @@
       list.innerHTML = otherVideos.map(video => `
         <div class="video-list-item">
           <div class="video-list-item-info">
-            <div class="video-list-item-title">${video.title} ${getPlatformBadge(video.url)}</div>
+            <div class="video-list-item-title">${video.title}</div>
             <div class="video-list-item-url">${video.url}</div>
           </div>
           <button class="video-list-item-delete" onclick="deleteVideo('${video.id}')">✕</button>
