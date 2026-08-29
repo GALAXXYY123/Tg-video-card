@@ -272,7 +272,7 @@
     let logoClickCount = 0;
     let logoClickTimer = null;
 
-    // 1. Определяем тип видео
+    // Определяем тип видео
     function getVideoType(url) {
       if (url.includes('cloudinary.com')) return 'cloudinary';
       if (url.includes('youtube.com') || url.includes('youtu.be')) return 'youtube';
@@ -281,11 +281,11 @@
       return 'unknown';
     }
 
-    // 2. Создаем правильную ссылку для плеера
+    // Создаем правильный src для каждого типа
     function createVideoSrc(url) {
       const type = getVideoType(url);
       
-      // Mave.io
+      // Mave.io — ИСПРАВЛЕНО: используем autoplay=always
       if (type === 'mave') {
         let embedId = '';
         if (url.includes('embed="')) {
@@ -293,14 +293,16 @@
         } else if (url.includes('/videos/')) {
           embedId = url.split('/videos/')[1].split('?')[0];
         } else if (url.includes('player.html')) {
-          return url + (url.includes('?') ? '&' : '?') + 'autoplay=1&muted=1&loop=1';
+          return url + (url.includes('?') ? '&' : '?') + 'autoplay=always&muted=1&loop=1';
         } else {
           embedId = url.trim();
         }
         
         const prefix = embedId.match(/^([a-z]+)/)?.[1] || 'trial';
         const hash = embedId.replace(prefix, '');
-        return `https://space-${prefix}.video-dns.com/${hash}/player.html?autoplay=1&muted=1&loop=1`;
+        
+        // ВАЖНО: для Mave.io используется autoplay=always, а не autoplay=1
+        return `https://space-${prefix}.video-dns.com/${hash}/player.html?autoplay=always&muted=1&loop=1`;
       }
       
       // Cloudinary
