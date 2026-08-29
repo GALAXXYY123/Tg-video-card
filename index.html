@@ -3,289 +3,200 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>POLYANA PROFILE</title>
+  <title>POLYANA | Video Editor</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    html,body{height:100%;margin:0}
-    body{
-      font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      color:#000;
-      overflow: hidden;
-    }
-    
-    /* Фоновые обои - фиксированные */
-    .background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
+    /* Базовые настройки */
+    html, body {
       height: 100%;
-      background:#000 url('bg.jpg') center/cover no-repeat;
-      z-index: -1;
+      margin: 0;
+      background-color: #ffffff; /* Белый холст */
+      font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      color: #111;
     }
-    
-    /* Основной контейнер */
+
     .app-container {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
+      max-width: 600px; /* Ограничиваем ширину для эстетики на ПК */
+      margin: 0 auto;
+      padding-bottom: 100px; /* Отступ под кнопку ТГ */
+    }
+
+    /* Заголовок */
+    .header {
+      text-align: center;
+      padding: 40px 20px 20px;
     }
     
-    .title{
-      flex-shrink: 0;
-      z-index:10;
-      text-align:center;
-      font-size:40px;
-      font-weight:800;
-      letter-spacing:.2em;
-      text-transform:uppercase;
-      text-shadow:0 2px 8px rgba(0,0,0,.5);
-      padding:calc(env(safe-area-inset-top) + 8px) 16px 12px;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin: 0;
     }
-    
-    /* Контейнер для ленты видео с прокруткой */
-    .video-feed-container {
-      flex: 1;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+
+    .header p {
+      font-size: 14px;
+      color: #666;
+      margin-top: 8px;
     }
-    
+
     /* Лента видео */
     .video-feed {
-      padding: 0 16px 80px;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 40px; /* Отступ между кейсами */
+      padding: 20px;
     }
-    
-    /* Стиль карточки с видео */
+
+    /* Карточка видео */
     .video-card {
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      background: #000;
-    }
-    
-    .video-card:active {
-      transform: scale(0.98);
-    }
-    
-    /* Контейнер для видео - реальные размеры */
-    .video-container {
-      position: relative;
-      width: 100%;
-      background: #000;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
     }
-    
-    /* Реальные размеры для разных форматов */
-    .video-square {
-      height: 80vw; /* Квадрат - почти на весь экран */
-      max-height: 80vh;
+
+    .video-wrapper {
+      width: 100%;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08); /* Легкая тень для объема на белом */
     }
-    
-    .video-portrait {
-      height: 140vw; /* Портрет - высокий */
-      max-height: 140vh;
-    }
-    
-    .video-landscape {
-      height: 56.25vw; /* Ландшафт - 16:9 */
-      max-height: 56.25vh;
-    }
-    
-    .video-cinema {
-      height: 42.85vw; /* Кино - 21:9 */
-      max-height: 42.85vh;
-    }
-    
-    .video-container iframe {
+
+    /* Настройки пропорций */
+    .ratio-landscape { aspect-ratio: 16/9; }
+    .ratio-portrait { aspect-ratio: 9/16; max-height: 80vh; }
+    .ratio-square { aspect-ratio: 1/1; }
+
+    iframe {
       width: 100%;
       height: 100%;
-      border: 0;
+      border: none;
       display: block;
     }
-    
-    /* Индикатор полноэкранного режима */
-    .fullscreen-indicator {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 6px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
+
+    /* Подпись под видео */
+    .caption {
+      margin-top: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      color: #333;
+      text-align: center;
+      letter-spacing: 0.02em;
     }
-    
-    .video-card:hover .fullscreen-indicator {
-      opacity: 1;
+
+    /* Кнопка Telegram */
+    .tg-button {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2AABEE; /* Цвет Telegram */
+      color: white;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(42, 171, 238, 0.4);
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .tg-button:hover {
+      transform: translateX(-50%) translateY(-2px);
+      box-shadow: 0 12px 30px rgba(42, 171, 238, 0.5);
+    }
+
+    .tg-icon {
+      width: 20px;
+      height: 20px;
+      fill: white;
     }
   </style>
 </head>
 <body>
-  <!-- Фиксированные обои -->
-  <div class="background"></div>
-  
-  <!-- Основной контейнер -->
+
   <div class="app-container">
-    <div class="title">POLYANA PROFILE</div>
-    
-    <!-- Контейнер с прокручиваемой лентой -->
-    <div class="video-feed-container">
-      <div class="video-feed" id="videoFeed">
-        <!-- Видео будут добавляться автоматически -->
-      </div>
+    <div class="header">
+      <h1>POLYANA</h1>
+      <p>Video Editing & Motion Design</p>
+    </div>
+
+    <div class="video-feed" id="videoFeed">
+      <!-- Видео загрузятся сюда -->
     </div>
   </div>
 
+  <!-- Кнопка Telegram -->
+  <a href="https://t.me/POLYANA_HUB" class="tg-button" target="_blank">
+    <svg class="tg-icon" viewBox="0 0 24 24">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.38-.49 1.03-.75 4.06-1.77 6.77-2.94 8.13-3.51 3.87-1.6 4.67-1.88 5.19-1.89.11 0 .37.03.54.17.14.12.18.28.2.45-.01.07-.01.14-.02.21z"/>
+    </svg>
+    Связаться в Telegram
+  </a>
+
   <script>
     const tg = window.Telegram?.WebApp;
-    if (tg) { 
-      tg.ready(); 
-      tg.expand(); 
-    }
+    if (tg) { tg.ready(); tg.expand(); }
 
-    // ВСЕ ВАШИ ВИДЕО УЖЕ ВСТАВЛЕНЫ
+    // ТВОИ ВИДЕО В НОВОМ ПОРЯДКЕ
     const videoLinks = [
-      // Первое видео из изначального кода
       {
-        url: "https://player.vimeo.com/video/1101236877",
-        aspect: "video-landscape"
-      },
-      // Ваши новые видео
-      {
-        url: "https://player.vimeo.com/video/1137811725",
-        aspect: "video-landscape"
+        url: "https://player.vimeo.com/video/1137819132", // Veo rec (AI)
+        aspect: "ratio-landscape",
+        title: "AI Motion / Experimental"
       },
       {
-        url: "https://player.vimeo.com/video/1137818000", 
-        aspect: "video-portrait"
+        url: "https://player.vimeo.com/video/1137811725", // KARMA OMUT
+        aspect: "ratio-landscape",
+        title: "Tattoo Process / Karma"
       },
       {
-        url: "https://player.vimeo.com/video/1137814296",
-        aspect: "video-landscape"
+        url: "https://player.vimeo.com/video/1137818000", // Vpiska
+        aspect: "ratio-portrait",
+        title: "Underground / Lifestyle"
       },
       {
-        url: "https://player.vimeo.com/video/1137819132",
-        aspect: "video-portrait"
+        url: "https://player.vimeo.com/video/1137814296", // Stu day
+        aspect: "ratio-landscape",
+        title: "Tattoo Session / Details"
       },
       {
-        url: "https://player.vimeo.com/video/1137821627",
-        aspect: "video-square"
+        url: "https://player.vimeo.com/video/1137821627", // MaysPizza
+        aspect: "ratio-square",
+        title: "Bar & Food / Reels"
       }
     ];
 
-    // Функция для создания Vimeo URL с полноэкранным режимом
     function createVimeoUrl(videoUrl) {
-      const baseParams = "title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&autoplay=0&background=0";
+      const baseParams = "title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&autoplay=0";
       const separator = videoUrl.includes('?') ? '&' : '?';
       return `${videoUrl}${separator}${baseParams}`;
     }
 
-    // Функция для создания карточки видео
-    function createVideoCard(videoData, index) {
-      return `
+    function loadAllVideos() {
+      const feed = document.getElementById('videoFeed');
+      feed.innerHTML = videoLinks.map(video => `
         <div class="video-card">
-          <div class="video-container ${videoData.aspect}">
-            <div class="fullscreen-indicator">Нажми для полноэкранного режима</div>
-            <iframe
-              src="${createVimeoUrl(videoData.url)}"
-              allow="fullscreen; picture-in-picture; autoplay"
-              allowfullscreen
-              loading="lazy"
-              referrerpolicy="strict-origin-when-cross-origin"
-              data-video-index="${index}">
+          <div class="video-wrapper ${video.aspect}">
+            <iframe 
+              src="${createVimeoUrl(video.url)}" 
+              allow="fullscreen; picture-in-picture" 
+              allowfullscreen 
+              loading="lazy">
             </iframe>
           </div>
+          <div class="caption">${video.title}</div>
         </div>
-      `;
+      `).join('');
     }
 
-    // Функция для загрузки всех видео
-    function loadAllVideos() {
-      const videoFeed = document.getElementById('videoFeed');
-      
-      if (videoLinks.length === 0) {
-        videoFeed.innerHTML = '<div style="color: white; text-align: center; padding: 40px;">Нет видео для показа</div>';
-        return;
-      }
-      
-      videoFeed.innerHTML = videoLinks.map((video, index) => 
-        createVideoCard(video, index)
-      ).join('');
-      
-      // Добавляем обработчики для полноэкранного режима
-      addFullscreenHandlers();
-    }
-
-    // Функция для перехода в полноэкранный режим
-    function enterFullscreen(iframe) {
-      // Vimeo автоматически переходит в полноэкранный режим при клике
-      // Создаем искусственный клик на iframe
-      iframe.requestFullscreen?.().catch(() => {});
-      
-      // Фокус на iframe для активации элементов управления Vimeo
-      iframe.focus();
-    }
-
-    // Добавляем обработчики кликов для полноэкранного режима
-    function addFullscreenHandlers() {
-      const iframes = document.querySelectorAll('iframe');
-      const videoCards = document.querySelectorAll('.video-card');
-      
-      videoCards.forEach((card, index) => {
-        card.addEventListener('click', function(e) {
-          // Если клик не на самом iframe (где уже есть свои контролы)
-          if (!e.target.closest('iframe')) {
-            const iframe = this.querySelector('iframe');
-            enterFullscreen(iframe);
-          }
-        });
-      });
-    }
-
-    // Загружаем видео при загрузке страницы
     document.addEventListener('DOMContentLoaded', loadAllVideos);
-
-    // Обработка изменения полноэкранного режима
-    document.addEventListener('fullscreenchange', function() {
-      if (!document.fullscreenElement) {
-        // Выход из полноэкранного режима
-        document.querySelectorAll('iframe').forEach(iframe => {
-          iframe.blur();
-        });
-      }
-    });
-
-    // Функции для управления видео
-    window.addNewVideo = function(url, aspect = "video-landscape") {
-      videoLinks.push({url, aspect});
-      loadAllVideos();
-      console.log(`✅ Добавлено новое видео: ${url}`);
-    }
-
-    window.removeVideo = function(index) {
-      if (index >= 0 && index < videoLinks.length) {
-        const removed = videoLinks.splice(index, 1);
-        loadAllVideos();
-        console.log(`🗑️ Удалено видео: ${removed[0].url}`);
-      }
-    }
-
-    window.showVideoList = function() {
-      console.log("📹 Список видео:");
-      videoLinks.forEach((video, index) => {
-        console.log(`${index}: ${video.url} (${video.aspect})`);
-      });
-    }
   </script>
 </body>
 </html>
