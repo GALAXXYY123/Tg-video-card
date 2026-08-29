@@ -166,18 +166,28 @@
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
 
-    const videoLinks = [
+    // AI видео всегда ПЕРВОЕ
+    const aiVideo = { 
+      url: "https://player.vimeo.com/video/1137819132", 
+      aspect: "ratio-landscape", 
+      title: "AI Motion / Experimental" 
+    };
+
+    // Остальные видео добавляются ПОСЛЕ AI
+    const otherVideos = [
       { 
         url: "https://player.vimeo.com/video/1222328524", 
         aspect: "ratio-portrait", 
         title: "SABOTAGE HHHB" 
       },
-      { url: "https://player.vimeo.com/video/1137819132", aspect: "ratio-landscape", title: "AI Motion / Experimental" },
       { url: "https://player.vimeo.com/video/1137811725", aspect: "ratio-landscape", title: "Tattoo Process / Karma" },
       { url: "https://player.vimeo.com/video/1137818000", aspect: "ratio-portrait", title: "Underground / Lifestyle" },
       { url: "https://player.vimeo.com/video/1137814296", aspect: "ratio-landscape", title: "Tattoo Session / Details" },
       { url: "https://player.vimeo.com/video/1137821627", aspect: "ratio-square", title: "Bar & Food / Reels" }
     ];
+
+    // Объединяем: AI + остальные
+    const videoLinks = [aiVideo, ...otherVideos];
 
     function createVimeoUrl(videoUrl) {
       const baseParams = "title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&autoplay=1&muted=1";
@@ -200,6 +210,16 @@
           <div class="caption">${video.title}</div>
         </div>
       `).join('');
+    }
+
+    // Функция для добавления нового видео (после AI)
+    window.addNewVideo = function(url, title, aspect = "ratio-landscape") {
+      otherVideos.push({ url, title, aspect });
+      videoLinks.length = 0;
+      videoLinks.push(aiVideo);
+      videoLinks.push(...otherVideos);
+      loadAllVideos();
+      console.log(`✅ Добавлено: ${title}`);
     }
 
     document.addEventListener('DOMContentLoaded', loadAllVideos);
