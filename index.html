@@ -189,26 +189,23 @@
       justify-content: center;
     }
 
-    /* Эффект старого монитора */
     .crt-effect {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: 
-        repeating-linear-gradient(
-          0deg,
-          rgba(0,0,0,0.03),
-          rgba(0,0,0,0.03) 1px,
-          transparent 1px,
-          transparent 2px
-        );
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0.03),
+        rgba(0,0,0,0.03) 1px,
+        transparent 1px,
+        transparent 2px
+      );
       pointer-events: none;
       z-index: 1;
     }
 
-    /* Глитчи на фоне */
     .glitch-bg {
       position: absolute;
       top: 0;
@@ -532,13 +529,6 @@
     .import-btn:hover {
       background: #f0f0f0;
     }
-
-    .admin-hint {
-      text-align: center;
-      padding: 20px;
-      color: #999;
-      font-size: 12px;
-    }
   </style>
 </head>
 <body>
@@ -555,8 +545,6 @@
     </div>
 
     <div class="video-feed" id="videoFeed"></div>
-    
-    <div class="admin-hint">💡 Кликни 3 раза на логотип для входа</div>
   </div>
 
   <a href="https://t.me/POLYANA_HUB" class="tg-button" target="_blank">
@@ -625,7 +613,7 @@
         </select>
       </div>
 
-      <button class="add-btn" onclick="addVideo()">➕ ДОБАВИТЬ ВИДЕО</button>
+      <button class="add-btn" onclick="addVideo()"> ДОБАВИТЬ ВИДЕО</button>
 
       <div class="video-list" id="videoList"></div>
 
@@ -673,7 +661,7 @@
       const feed = document.getElementById('videoFeed');
       feed.innerHTML = videoLinks.map(video => `
         <div class="video-card" data-id="${video.id}">
-          <button class="delete-btn" onclick="deleteVideo(${video.id})"></button>
+          <button class="delete-btn" onclick="deleteVideo('${video.id}')">✕</button>
           <div class="video-wrapper ${video.aspect}">
             <iframe 
               src="${createVimeoUrl(video.url)}" 
@@ -701,7 +689,8 @@
         return;
       }
 
-      otherVideos.push({
+      // unshift добавляет видео в НАЧАЛО массива (сразу после AI)
+      otherVideos.unshift({
         url,
         title,
         aspect,
@@ -720,7 +709,7 @@
       if (id === 'ai') return;
       
       if (confirm('Удалить это видео?')) {
-        otherVideos = otherVideos.filter(v => v.id !== id);
+        otherVideos = otherVideos.filter(v => String(v.id) !== String(id));
         saveVideos();
         loadAllVideos();
         updateVideoList();
@@ -740,14 +729,14 @@
             <div class="video-list-item-title">${video.title}</div>
             <div class="video-list-item-url">${video.url}</div>
           </div>
-          <button class="video-list-item-delete" onclick="deleteVideo(${video.id})">✕</button>
+          <button class="video-list-item-delete" onclick="deleteVideo('${video.id}')">✕</button>
         </div>
       `).join('');
     }
 
     function openPassword() {
       document.getElementById('passwordPanel').classList.add('active');
-      document.getElementById('passwordInput').focus();
+      setTimeout(() => document.getElementById('passwordInput').focus(), 100);
     }
 
     function closePassword() {
@@ -823,7 +812,7 @@
       
       logoClickTimer = setTimeout(() => {
         logoClickCount = 0;
-      }, 500);
+      }, 600);
 
       if (logoClickCount >= 3) {
         logoClickCount = 0;
@@ -831,7 +820,6 @@
       }
     });
 
-    // Enter для ввода пароля
     document.getElementById('passwordInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         checkPassword();
