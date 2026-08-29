@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>POLYANA | Video Editor</title>
   
-  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a1a1a' width='100' height='100' rx='20'/><path fill='%23fff' d='M35 35h30v30H35V35zm-5 10h5v5h-5v-5zm35 0h5v5h-5v-5z'/><circle fill='none' stroke='%23fff' stroke-width='3' cx='50' cy='50' r='20'/></svg>">
   
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -42,6 +41,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s;
+    }
+    
+    .logo-icon:active {
+      transform: scale(0.95);
     }
     
     .logo-icon svg {
@@ -76,6 +82,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      position: relative;
     }
 
     .video-wrapper {
@@ -107,6 +114,32 @@
       text-transform: uppercase;
     }
 
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+      background: rgba(255,0,0,0.9);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .delete-btn:hover {
+      background: rgba(255,0,0,1);
+    }
+
+    body.admin-mode .delete-btn {
+      display: flex;
+    }
+
     .tg-button {
       position: fixed;
       bottom: 30px;
@@ -136,13 +169,383 @@
       height: 28px;
       fill: #fff;
     }
+
+    /* Панель пароля - стиль старого монитора */
+    .password-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .password-panel.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Эффект старого монитора */
+    .crt-effect {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        repeating-linear-gradient(
+          0deg,
+          rgba(0,0,0,0.03),
+          rgba(0,0,0,0.03) 1px,
+          transparent 1px,
+          transparent 2px
+        );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Глитчи на фоне */
+    .glitch-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .glitch-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: rgba(0,0,0,0.1);
+      animation: glitchMove 3s infinite;
+    }
+
+    .glitch-line:nth-child(1) { top: 20%; animation-delay: 0s; }
+    .glitch-line:nth-child(2) { top: 40%; animation-delay: 0.5s; }
+    .glitch-line:nth-child(3) { top: 60%; animation-delay: 1s; }
+    .glitch-line:nth-child(4) { top: 80%; animation-delay: 1.5s; }
+
+    @keyframes glitchMove {
+      0%, 100% { transform: translateX(0); opacity: 0.3; }
+      50% { transform: translateX(-10px); opacity: 0.6; }
+    }
+
+    .password-content {
+      position: relative;
+      z-index: 2;
+      background: #fff;
+      border: 3px solid #000;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 0 0 1px #000, 0 20px 60px rgba(0,0,0,0.2);
+    }
+
+    .password-title {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+      animation: glitchText 2s infinite;
+    }
+
+    @keyframes glitchText {
+      0%, 90%, 100% { 
+        text-shadow: none;
+        transform: translate(0);
+      }
+      92% {
+        text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
+        transform: translate(-2px, 0);
+      }
+      94% {
+        text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
+        transform: translate(2px, 0);
+      }
+      96% {
+        text-shadow: none;
+        transform: translate(0);
+      }
+    }
+
+    .password-input-wrapper {
+      margin-bottom: 30px;
+    }
+
+    .password-input {
+      width: 100%;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 0.2em;
+      border: 3px solid #000;
+      border-radius: 12px;
+      background: #fff;
+      color: #000;
+      font-family: 'Courier New', monospace;
+      box-sizing: border-box;
+    }
+
+    .password-input:focus {
+      outline: none;
+      border-color: #000;
+      box-shadow: 0 0 0 4px rgba(0,0,0,0.1);
+    }
+
+    .password-input::placeholder {
+      color: #999;
+      letter-spacing: 0.1em;
+    }
+
+    .password-btn {
+      width: 100%;
+      padding: 20px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .password-btn:hover {
+      background: #333;
+      transform: translateY(-2px);
+    }
+
+    .password-btn:active {
+      transform: translateY(0);
+    }
+
+    .close-password {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: #000;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 3;
+    }
+
+    .error-message {
+      text-align: center;
+      color: #ff0000;
+      font-weight: 600;
+      margin-top: 20px;
+      display: none;
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    /* Админ-панель */
+    .admin-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      z-index: 1001;
+      overflow-y: auto;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .admin-panel.active {
+      display: block;
+    }
+
+    .admin-content {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      border: 3px solid #000;
+      border-radius: 20px;
+      padding: 30px;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .admin-header h2 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+
+    .close-btn {
+      width: 40px;
+      height: 40px;
+      background: #000;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #000;
+      border-radius: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #000;
+      box-shadow: 0 0 0 4px rgba(0,0,0,0.1);
+    }
+
+    .add-btn {
+      width: 100%;
+      padding: 16px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .add-btn:hover {
+      background: #333;
+    }
+
+    .video-list {
+      border-top: 2px solid #000;
+      padding-top: 20px;
+    }
+
+    .video-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: #f5f5f5;
+      border: 2px solid #000;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .video-list-item-info {
+      flex: 1;
+    }
+
+    .video-list-item-title {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .video-list-item-url {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .video-list-item-delete {
+      width: 32px;
+      height: 32px;
+      background: #ff0000;
+      border: 2px solid #000;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .export-import {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid #000;
+    }
+
+    .export-btn,
+    .import-btn {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #000;
+      border-radius: 10px;
+      background: #fff;
+      color: #000;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .export-btn:hover,
+    .import-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .admin-hint {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+      font-size: 12px;
+    }
   </style>
 </head>
 <body>
 
   <div class="app-container">
     <div class="header">
-      <div class="logo-icon">
+      <div class="logo-icon" id="logoIcon">
         <svg viewBox="0 0 24 24">
           <path d="M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 11.5V13H9v2.5L5.5 12 9 8.5V11h6V8.5l3.5 3.5-3.5 3.5z"/>
         </svg>
@@ -151,9 +554,9 @@
       <p>Video Editing & Motion</p>
     </div>
 
-    <div class="video-feed" id="videoFeed">
-      <!-- Видео загрузятся сюда -->
-    </div>
+    <div class="video-feed" id="videoFeed"></div>
+    
+    <div class="admin-hint">💡 Кликни 3 раза на логотип для входа</div>
   </div>
 
   <a href="https://t.me/POLYANA_HUB" class="tg-button" target="_blank">
@@ -162,32 +565,102 @@
     </svg>
   </a>
 
+  <!-- Панель пароля -->
+  <div class="password-panel" id="passwordPanel">
+    <div class="glitch-bg">
+      <div class="glitch-line"></div>
+      <div class="glitch-line"></div>
+      <div class="glitch-line"></div>
+      <div class="glitch-line"></div>
+    </div>
+    <div class="crt-effect"></div>
+    
+    <button class="close-password" onclick="closePassword()">✕</button>
+    
+    <div class="password-content">
+      <h2 class="password-title">ПАНЕЛЬ УПРАВЛЕНИЯ</h2>
+      
+      <div class="password-input-wrapper">
+        <input 
+          type="password" 
+          class="password-input" 
+          id="passwordInput" 
+          placeholder="ВВЕДИТЕ ПАРОЛЬ"
+          autocomplete="off"
+        >
+      </div>
+      
+      <button class="password-btn" onclick="checkPassword()">ВОЙТИ</button>
+      
+      <div class="error-message" id="errorMessage">
+        ❌ НЕВЕРНЫЙ ПАРОЛЬ
+      </div>
+    </div>
+  </div>
+
+  <!-- Админ-панель -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-content">
+      <div class="admin-header">
+        <h2>🎬 УПРАВЛЕНИЕ ВИДЕО</h2>
+        <button class="close-btn" onclick="closeAdmin()">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label>Ссылка Vimeo</label>
+        <input type="text" id="videoUrl" placeholder="https://player.vimeo.com/video/123456789">
+      </div>
+
+      <div class="form-group">
+        <label>Название</label>
+        <input type="text" id="videoTitle" placeholder="Например: Tattoo Process">
+      </div>
+
+      <div class="form-group">
+        <label>Формат</label>
+        <select id="videoAspect">
+          <option value="ratio-portrait">Вертикальное (9:16)</option>
+          <option value="ratio-landscape">Горизонтальное (16:9)</option>
+          <option value="ratio-square">Квадратное (1:1)</option>
+        </select>
+      </div>
+
+      <button class="add-btn" onclick="addVideo()">➕ ДОБАВИТЬ ВИДЕО</button>
+
+      <div class="video-list" id="videoList"></div>
+
+      <div class="export-import">
+        <button class="export-btn" onclick="exportData()">📥 ЭКСПОРТ JSON</button>
+        <button class="import-btn" onclick="document.getElementById('importFile').click()">📤 ИМПОРТ JSON</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+      </div>
+    </div>
+  </div>
+
   <script>
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
 
-    // AI видео всегда ПЕРВОЕ
+    const PASSWORD = 'HUB2026';
+    
     const aiVideo = { 
       url: "https://player.vimeo.com/video/1137819132", 
       aspect: "ratio-landscape", 
-      title: "AI Motion / Experimental" 
+      title: "AI Motion / Experimental",
+      id: 'ai'
     };
 
-    // Остальные видео добавляются ПОСЛЕ AI
-    const otherVideos = [
-      { 
-        url: "https://player.vimeo.com/video/1222328524", 
-        aspect: "ratio-portrait", 
-        title: "SABOTAGE HHHB" 
-      },
-      { url: "https://player.vimeo.com/video/1137811725", aspect: "ratio-landscape", title: "Tattoo Process / Karma" },
-      { url: "https://player.vimeo.com/video/1137818000", aspect: "ratio-portrait", title: "Underground / Lifestyle" },
-      { url: "https://player.vimeo.com/video/1137814296", aspect: "ratio-landscape", title: "Tattoo Session / Details" },
-      { url: "https://player.vimeo.com/video/1137821627", aspect: "ratio-square", title: "Bar & Food / Reels" }
+    let otherVideos = JSON.parse(localStorage.getItem('polyanaVideos')) || [
+      { url: "https://player.vimeo.com/video/1222328524", aspect: "ratio-portrait", title: "SABOTAGE HHHB", id: Date.now() + 1 },
+      { url: "https://player.vimeo.com/video/1137811725", aspect: "ratio-landscape", title: "Tattoo Process / Karma", id: Date.now() + 2 },
+      { url: "https://player.vimeo.com/video/1137818000", aspect: "ratio-portrait", title: "Underground / Lifestyle", id: Date.now() + 3 },
+      { url: "https://player.vimeo.com/video/1137814296", aspect: "ratio-landscape", title: "Tattoo Session / Details", id: Date.now() + 4 },
+      { url: "https://player.vimeo.com/video/1137821627", aspect: "ratio-square", title: "Bar & Food / Reels", id: Date.now() + 5 }
     ];
 
-    // Объединяем: AI + остальные
-    const videoLinks = [aiVideo, ...otherVideos];
+    let videoLinks = [];
+    let logoClickCount = 0;
+    let logoClickTimer = null;
 
     function createVimeoUrl(videoUrl) {
       const baseParams = "title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&autoplay=1&muted=1";
@@ -196,9 +669,11 @@
     }
 
     function loadAllVideos() {
+      videoLinks = [aiVideo, ...otherVideos];
       const feed = document.getElementById('videoFeed');
       feed.innerHTML = videoLinks.map(video => `
-        <div class="video-card">
+        <div class="video-card" data-id="${video.id}">
+          <button class="delete-btn" onclick="deleteVideo(${video.id})"></button>
           <div class="video-wrapper ${video.aspect}">
             <iframe 
               src="${createVimeoUrl(video.url)}" 
@@ -212,15 +687,156 @@
       `).join('');
     }
 
-    // Функция для добавления нового видео (после AI)
-    window.addNewVideo = function(url, title, aspect = "ratio-landscape") {
-      otherVideos.push({ url, title, aspect });
-      videoLinks.length = 0;
-      videoLinks.push(aiVideo);
-      videoLinks.push(...otherVideos);
-      loadAllVideos();
-      console.log(`✅ Добавлено: ${title}`);
+    function saveVideos() {
+      localStorage.setItem('polyanaVideos', JSON.stringify(otherVideos));
     }
+
+    function addVideo() {
+      const url = document.getElementById('videoUrl').value.trim();
+      const title = document.getElementById('videoTitle').value.trim();
+      const aspect = document.getElementById('videoAspect').value;
+
+      if (!url || !title) {
+        alert('Заполни ссылку и название!');
+        return;
+      }
+
+      otherVideos.push({
+        url,
+        title,
+        aspect,
+        id: Date.now()
+      });
+
+      saveVideos();
+      loadAllVideos();
+      updateVideoList();
+
+      document.getElementById('videoUrl').value = '';
+      document.getElementById('videoTitle').value = '';
+    }
+
+    function deleteVideo(id) {
+      if (id === 'ai') return;
+      
+      if (confirm('Удалить это видео?')) {
+        otherVideos = otherVideos.filter(v => v.id !== id);
+        saveVideos();
+        loadAllVideos();
+        updateVideoList();
+      }
+    }
+
+    function updateVideoList() {
+      const list = document.getElementById('videoList');
+      if (otherVideos.length === 0) {
+        list.innerHTML = '<p style="text-align:center;color:#999;">Нет видео</p>';
+        return;
+      }
+      
+      list.innerHTML = otherVideos.map(video => `
+        <div class="video-list-item">
+          <div class="video-list-item-info">
+            <div class="video-list-item-title">${video.title}</div>
+            <div class="video-list-item-url">${video.url}</div>
+          </div>
+          <button class="video-list-item-delete" onclick="deleteVideo(${video.id})">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function openPassword() {
+      document.getElementById('passwordPanel').classList.add('active');
+      document.getElementById('passwordInput').focus();
+    }
+
+    function closePassword() {
+      document.getElementById('passwordPanel').classList.remove('active');
+      document.getElementById('passwordInput').value = '';
+      document.getElementById('errorMessage').style.display = 'none';
+    }
+
+    function checkPassword() {
+      const input = document.getElementById('passwordInput').value;
+      
+      if (input === PASSWORD) {
+        closePassword();
+        openAdmin();
+      } else {
+        document.getElementById('errorMessage').style.display = 'block';
+        document.getElementById('passwordInput').value = '';
+        setTimeout(() => {
+          document.getElementById('errorMessage').style.display = 'none';
+        }, 2000);
+      }
+    }
+
+    function openAdmin() {
+      document.getElementById('adminPanel').classList.add('active');
+      document.body.classList.add('admin-mode');
+      updateVideoList();
+    }
+
+    function closeAdmin() {
+      document.getElementById('adminPanel').classList.remove('active');
+      document.body.classList.remove('admin-mode');
+    }
+
+    function exportData() {
+      const data = JSON.stringify(otherVideos, null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'polyana-videos.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (Array.isArray(data)) {
+            otherVideos = data;
+            saveVideos();
+            loadAllVideos();
+            updateVideoList();
+            alert('✅ Видео импортированы!');
+          }
+        } catch (err) {
+          alert('❌ Ошибка чтения файла');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Тройной клик на логотип
+    document.getElementById('logoIcon').addEventListener('click', function() {
+      logoClickCount++;
+      
+      if (logoClickTimer) clearTimeout(logoClickTimer);
+      
+      logoClickTimer = setTimeout(() => {
+        logoClickCount = 0;
+      }, 500);
+
+      if (logoClickCount >= 3) {
+        logoClickCount = 0;
+        openPassword();
+      }
+    });
+
+    // Enter для ввода пароля
+    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        checkPassword();
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', loadAllVideos);
   </script>
