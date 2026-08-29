@@ -7,6 +7,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>POLYANA | Video Editor</title>
   
+  <!-- Официальный скрипт Mave.io для корректного автоплея -->
+  <script type="module" src="https://cdn.video-dns.com/npm/@maveio/components/+esm"></script>
+  
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a1a1a' width='100' height='100' rx='20'/><path fill='%23fff' d='M35 35h30v30H35V35zm-5 10h5v5h-5v-5zm35 0h5v5h-5v-5z'/><circle fill='none' stroke='%23fff' stroke-width='3' cx='50' cy='50' r='20'/></svg>">
   
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -48,7 +51,7 @@
     .ratio-portrait { aspect-ratio: 9/16; max-height: 75vh; }
     .ratio-square { aspect-ratio: 1/1; }
     .ratio-4-3 { aspect-ratio: 4/3; }
-    iframe, video { width: 100%; height: 100%; border: none; display: block; }
+    iframe, video, mave-player { width: 100%; height: 100%; border: none; display: block; }
     .caption {
       margin-top: 12px; font-size: 14px; font-weight: 600; color: #333;
       text-align: center; letter-spacing: 0.05em; text-transform: uppercase;
@@ -272,7 +275,6 @@
     let logoClickCount = 0;
     let logoClickTimer = null;
 
-    // Определяем тип видео
     function getVideoType(url) {
       if (url.includes('cloudinary.com')) return 'cloudinary';
       if (url.includes('youtube.com') || url.includes('youtu.be')) return 'youtube';
@@ -281,57 +283,10 @@
       return 'unknown';
     }
 
-    // Создаем правильный src для каждого типа
-    function createVideoSrc(url) {
-      const type = getVideoType(url);
-      
-      // Mave.io — ИСПРАВЛЕНО: используем autoplay=always
-      if (type === 'mave') {
-        let embedId = '';
-        if (url.includes('embed="')) {
-          embedId = url.split('embed="')[1].split('"')[0];
-        } else if (url.includes('/videos/')) {
-          embedId = url.split('/videos/')[1].split('?')[0];
-        } else if (url.includes('player.html')) {
-          return url + (url.includes('?') ? '&' : '?') + 'autoplay=always&muted=1&loop=1';
-        } else {
-          embedId = url.trim();
-        }
-        
-        const prefix = embedId.match(/^([a-z]+)/)?.[1] || 'trial';
-        const hash = embedId.replace(prefix, '');
-        
-        // ВАЖНО: для Mave.io используется autoplay=always, а не autoplay=1
-        return `https://space-${prefix}.video-dns.com/${hash}/player.html?autoplay=always&muted=1&loop=1`;
-      }
-      
-      // Cloudinary
-      if (type === 'cloudinary') {
-        return url;
-      }
-      
-      // Vimeo (работает ТОЧНО так же, как раньше)
-      if (type === 'vimeo') {
-        const cleanUrl = url.split('?')[0];
-        const params = url.includes('?') ? url.split('?')[1] : '';
-        const baseParams = "title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&autoplay=1&muted=1";
-        return params ? `${cleanUrl}?${params}&${baseParams}` : `${cleanUrl}?${baseParams}`;
-      }
-      
-      // YouTube
-      if (type === 'youtube') {
-        let videoId = '';
-        if (url.includes('v=')) {
-          videoId = url.split('v=')[1].split('&')[0];
-        } else if (url.includes('youtu.be/')) {
-          videoId = url.split('youtu.be/')[1].split('?')[0];
-        } else if (url.includes('/embed/')) {
-          videoId = url.split('/embed/')[1].split('?')[0];
-        }
-        return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1&playsinline=1`;
-      }
-      
-      return url;
+    function getMaveEmbedId(url) {
+      if (url.includes('embed="')) return url.split('embed="')[1].split('"')[0];
+      if (url.includes('/videos/')) return url.split('/videos/')[1].split('?')[0];
+      return url.trim();
     }
 
     function loadAllVideos() {
@@ -339,7 +294,6 @@
       const feed = document.getElementById('videoFeed');
       
       feed.innerHTML = videoLinks.map(video => {
-        const src = createVideoSrc(video.url);
         const type = getVideoType(video.url);
         
         return `
@@ -348,10 +302,23 @@
             <div class="video-wrapper ${video.aspect}">
               ${type === 'cloudinary' ? `
                 <video autoplay muted loop playsinline controls style="width: 100%; height: 100%; object-fit: cover;">
-                  <source src="${src}" type="video/mp4">
+                  <source src="${video.url}" type="video/mp4">
                 </video>
+              ` : type === 'mave' ? `
+                <!-- Официальный компонент Mave с гарантированным автоплеем -->
+                <mave-player 
+                  embed="${getMaveEmbedId(video.url)}" 
+                  autoplay="always" 
+                  muted="1"
+                  style="display: block; width: 100%; height: 100%; object-fit: cover;"
+                ></mave-player>
               ` : `
-                <iframe src="${src}" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen loading="lazy"></iframe>
+                <iframe 
+                  src="${video.url}" 
+                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media" 
+                  allowfullscreen 
+                  loading="lazy">
+                </iframe>
               `}
             </div>
             <div class="caption">${video.title}</div>
