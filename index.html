@@ -48,7 +48,7 @@
     .ratio-portrait { aspect-ratio: 9/16; max-height: 75vh; }
     .ratio-square { aspect-ratio: 1/1; }
     .ratio-4-3 { aspect-ratio: 4/3; }
-    iframe { width: 100%; height: 100%; border: none; display: block; }
+    iframe, video { width: 100%; height: 100%; border: none; display: block; }
     .caption {
       margin-top: 12px; font-size: 14px; font-weight: 600; color: #333;
       text-align: center; letter-spacing: 0.05em; text-transform: uppercase;
@@ -181,11 +181,18 @@
       color: #000; font-weight: 600; cursor: pointer; font-size: 14px;
     }
     .export-btn:active, .import-btn:active { background: #f0f0f0; transform: scale(0.98); }
-    
     .reset-btn {
       width: 100%; padding: 12px; margin-top: 10px; background: #fff; color: #ff0000; 
       border: 2px solid #ff0000; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 14px;
     }
+    .platform-badge {
+      display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px;
+      font-weight: 700; text-transform: uppercase; margin-left: 8px;
+    }
+    .badge-vimeo { background: #1ab7ea; color: #fff; }
+    .badge-cloudinary { background: #3448c5; color: #fff; }
+    .badge-youtube { background: #ff0000; color: #fff; }
+    .badge-default { background: #999; color: #fff; }
   </style>
 </head>
 <body>
@@ -221,11 +228,11 @@
     <div class="admin-content">
       <div class="admin-header">
         <h2>УПРАВЛЕНИЕ ВИДЕО</h2>
-        <button class="close-btn" onclick="closeAdmin()">✕</button>
+        <button class="close-btn" onclick="closeAdmin()"></button>
       </div>
       <div class="form-group">
-        <label>Ссылка Vimeo</label>
-        <input type="text" id="videoUrl" placeholder="https://player.vimeo.com/video/123456789">
+        <label>Ссылка на видео (Vimeo / Cloudinary / YouTube)</label>
+        <input type="text" id="videoUrl" placeholder="https://player.vimeo.com/video/... или https://res.cloudinary.com/...">
       </div>
       <div class="form-group">
         <label>Название</label>
@@ -260,7 +267,7 @@
     const aiVideo = { url: "https://player.vimeo.com/video/1137819132", aspect: "ratio-landscape", title: "AI Motion / Experimental", id: 'ai' };
 
     const defaultVideos = [
-      { url: "https://player.vimeo.com/video/1222329449", aspect: "ratio-4-3", title: "SVADBA KREEM", id: 'svadba' },
+      { url: "https://player.vimeo.com/video/1222329449?h=8d7a524287", aspect: "ratio-4-3", title: "SVADBA KREEM", id: 'svadba' },
       { url: "https://player.vimeo.com/video/1222328524", aspect: "ratio-portrait", title: "SABOTAGE HHHB", id: 'sabotage' },
       { url: "https://player.vimeo.com/video/1137811725", aspect: "ratio-landscape", title: "Tattoo Process / Karma", id: 'karma' },
       { url: "https://player.vimeo.com/video/1137818000", aspect: "ratio-portrait", title: "Underground / Lifestyle", id: 'underground' },
@@ -273,30 +280,93 @@
     let logoClickCount = 0;
     let logoClickTimer = null;
 
-    function createVimeoUrl(videoUrl) {
-      // Очищаем ссылку от любых старых параметров и добавляем правильные
-      const cleanUrl = videoUrl.split('?')[0];
-      // autoplay=1 и muted=1 - это ЕДИНСТВЕННЫЙ способ заставить видео играть автоматически на iPhone и в Chrome
-      return `${cleanUrl}?title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&autoplay=1&muted=1`;
+    // Определяем тип видео и создаём правильный src
+    function getVideoType(url) {
+      if (url.includes('cloudinary.com')) return 'cloudinary';
+      if (url.includes('youtube.com') || url.includes('youtu.be')) return 'youtube';
+      if (url.includes('vimeo.com')) return 'vimeo';
+      return 'unknown';
+    }
+
+    function createVideoSrc(url) {
+      const type = getVideoType(url);
+      
+      if (type === 'cloudinary') {
+        return url; // Прямая ссылка на MP4
+      }
+      
+      if (type === 'vimeo') {
+        const cleanUrl = url.split('?')[0];
+        const params = url.includes('?') ? url.split('?')[1] : '';
+        const baseParams = "title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&autoplay=1&muted=1";
+        return params ? `${cleanUrl}?${params}&${baseParams}` : `${cleanUrl}?${baseParams}`;
+      }
+      
+      if (type === 'youtube') {
+        let videoId = '';
+        if (url.includes('v=')) {
+          videoId = url.split('v=')[1].split('&')[0];
+        } else if (url.includes('youtu.be/')) {
+          videoId = url.split('youtu.be/')[1].split('?')[0];
+        } else if (url.includes('/embed/')) {
+          videoId = url.split('/embed/')[1].split('?')[0];
+        }
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1&playsinline=1`;
+      }
+      
+      return url;
+    }
+
+    function getPlatformBadge(url) {
+      const type = getVideoType(url);
+      const badges = {
+        'vimeo': '<span class="platform-badge badge-vimeo">Vimeo</span>',
+        'cloudinary': '<span class="platform-badge badge-cloudinary">Cloudinary</span>',
+        'youtube': '<span class="platform-badge badge-youtube">YouTube</span>',
+        'unknown': '<span class="platform-badge badge-default">Direct</span>'
+      };
+      return badges[type] || badges['unknown'];
     }
 
     function loadAllVideos() {
       videoLinks = [aiVideo, ...otherVideos];
       const feed = document.getElementById('videoFeed');
-      feed.innerHTML = videoLinks.map(video => `
-        <div class="video-card" data-id="${video.id}">
-          <button class="delete-btn" onclick="deleteVideo('${video.id}')">✕</button>
-          <div class="video-wrapper ${video.aspect}">
-            <iframe 
-              src="${createVimeoUrl(video.url)}" 
-              allow="autoplay; fullscreen; picture-in-picture; encrypted-media" 
-              allowfullscreen 
-              loading="lazy">
-            </iframe>
+      
+      feed.innerHTML = videoLinks.map(video => {
+        const src = createVideoSrc(video.url);
+        const type = getVideoType(video.url);
+        
+        return `
+          <div class="video-card" data-id="${video.id}">
+            <button class="delete-btn" onclick="deleteVideo('${video.id}')">✕</button>
+            <div class="video-wrapper ${video.aspect}">
+              ${type === 'cloudinary' ? `
+                <video 
+                  autoplay 
+                  muted 
+                  loop 
+                  playsinline
+                  controls
+                  style="width: 100%; height: 100%; object-fit: cover;"
+                >
+                  <source src="${src}" type="video/mp4">
+                </video>
+              ` : `
+                <iframe 
+                  src="${src}" 
+                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media" 
+                  allowfullscreen 
+                  loading="lazy">
+                </iframe>
+              `}
+            </div>
+            <div class="caption">
+              ${video.title}
+              ${getPlatformBadge(video.url)}
+            </div>
           </div>
-          <div class="caption">${video.title}</div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function saveVideos() {
@@ -339,7 +409,7 @@
       list.innerHTML = otherVideos.map(video => `
         <div class="video-list-item">
           <div class="video-list-item-info">
-            <div class="video-list-item-title">${video.title}</div>
+            <div class="video-list-item-title">${video.title} ${getPlatformBadge(video.url)}</div>
             <div class="video-list-item-url">${video.url}</div>
           </div>
           <button class="video-list-item-delete" onclick="deleteVideo('${video.id}')">✕</button>
