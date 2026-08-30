@@ -1,6 +1,9 @@
 <!doctype html>
+
 <html lang="ru">
+
 <head>
+
   <meta charset="utf-8">
 
   <meta
@@ -8,7 +11,10 @@
     content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
   >
 
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  >
 
   <meta
     name="apple-mobile-web-app-status-bar-style"
@@ -17,18 +23,9 @@
 
   <title>POLYANA | Video Editor</title>
 
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href="data:image/svg+xml,
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
-    <rect fill='%231a1a1a' width='100' height='100' rx='20'/>
-    <circle fill='none' stroke='%23fff' stroke-width='6' cx='50' cy='50' r='25'/>
-    <path fill='%23fff' d='M45 38l22 12-22 12z'/>
-    </svg>"
-  >
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 
   <style>
 
@@ -37,10 +34,13 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+
     html,
     body {
+
       height: 100%;
       margin: 0;
+
       background-color: #ffffff;
 
       font-family:
@@ -57,12 +57,9 @@
       -webkit-font-smoothing: antialiased;
 
       overscroll-behavior: none;
+
     }
 
-
-    /* ========================= */
-    /* ОСНОВНОЙ КОНТЕЙНЕР */
-    /* ========================= */
 
     .app-container {
 
@@ -72,7 +69,8 @@
 
       min-height: 100vh;
 
-      padding-top: env(safe-area-inset-top);
+      padding-top:
+        env(safe-area-inset-top);
 
       padding-bottom:
         calc(
@@ -83,9 +81,9 @@
     }
 
 
-    /* ========================= */
-    /* HEADER */
-    /* ========================= */
+    /* ======================================
+       HEADER
+    ====================================== */
 
     .header {
 
@@ -127,14 +125,16 @@
 
       user-select: none;
 
-      transition: transform 0.2s;
+      transition:
+        transform 0.2s;
 
     }
 
 
     .logo-icon:active {
 
-      transform: scale(0.95);
+      transform:
+        scale(0.95);
 
     }
 
@@ -178,9 +178,9 @@
     }
 
 
-    /* ========================= */
-    /* VIDEO FEED */
-    /* ========================= */
+    /* ======================================
+       VIDEO FEED
+    ====================================== */
 
     .video-feed {
 
@@ -287,11 +287,11 @@
     }
 
 
-    /* ========================= */
-    /* ADMIN BUTTONS ON VIDEO */
-    /* ========================= */
+    /* ======================================
+       DELETE BUTTON
+    ====================================== */
 
-    .video-actions {
+    .delete-btn {
 
       position: absolute;
 
@@ -299,65 +299,44 @@
 
       right: 10px;
 
-      display: none;
-
-      gap: 8px;
-
-      z-index: 20;
-
-    }
-
-
-    body.admin-mode .video-actions {
-
-      display: flex;
-
-    }
-
-
-    .edit-btn,
-    .delete-btn {
-
       width: 44px;
 
       height: 44px;
+
+      background:
+        rgba(255,0,0,0.9);
 
       border: none;
 
       border-radius: 10px;
 
-      color: #fff;
+      color: white;
+
+      font-size: 24px;
 
       cursor: pointer;
 
-      font-size: 20px;
-
-      display: flex;
+      display: none;
 
       align-items: center;
 
       justify-content: center;
 
-    }
-
-
-    .edit-btn {
-
-      background: #000;
+      z-index: 10;
 
     }
 
 
-    .delete-btn {
+    body.admin-mode .delete-btn {
 
-      background: #ff0000;
+      display: flex;
 
     }
 
 
-    /* ========================= */
-    /* TELEGRAM */
-    /* ========================= */
+    /* ======================================
+       TELEGRAM
+    ====================================== */
 
     .tg-button {
 
@@ -371,7 +350,8 @@
 
       left: 50%;
 
-      transform: translateX(-50%);
+      transform:
+        translateX(-50%);
 
       background: #000;
 
@@ -395,20 +375,7 @@
         0 8px 24px
         rgba(0,0,0,0.2);
 
-      transition: all 0.3s ease;
-
       z-index: 100;
-
-    }
-
-
-    .tg-button:active {
-
-      transform:
-        translateX(-50%)
-        scale(0.95);
-
-      background: #333;
 
     }
 
@@ -424,9 +391,9 @@
     }
 
 
-    /* ========================= */
-    /* PASSWORD PANEL */
-    /* ========================= */
+    /* ======================================
+       PASSWORD PANEL
+    ====================================== */
 
     .password-panel {
 
@@ -462,105 +429,6 @@
     }
 
 
-    .crt-effect {
-
-      position: absolute;
-
-      top: 0;
-
-      left: 0;
-
-      width: 100%;
-
-      height: 100%;
-
-      background:
-        repeating-linear-gradient(
-          0deg,
-          rgba(0,0,0,0.03),
-          rgba(0,0,0,0.03) 1px,
-          transparent 1px,
-          transparent 2px
-        );
-
-      pointer-events: none;
-
-    }
-
-
-    .glitch-bg {
-
-      position: absolute;
-
-      width: 100%;
-
-      height: 100%;
-
-      overflow: hidden;
-
-    }
-
-
-    .glitch-line {
-
-      position: absolute;
-
-      width: 100%;
-
-      height: 2px;
-
-      background:
-        rgba(0,0,0,0.1);
-
-      animation:
-        glitchMove
-        3s
-        infinite;
-
-    }
-
-
-    .glitch-line:nth-child(1) {
-      top: 20%;
-    }
-
-    .glitch-line:nth-child(2) {
-      top: 40%;
-    }
-
-    .glitch-line:nth-child(3) {
-      top: 60%;
-    }
-
-    .glitch-line:nth-child(4) {
-      top: 80%;
-    }
-
-
-    @keyframes glitchMove {
-
-      0%,
-      100% {
-
-        transform:
-          translateX(0);
-
-        opacity: 0.3;
-
-      }
-
-      50% {
-
-        transform:
-          translateX(-10px);
-
-        opacity: 0.6;
-
-      }
-
-    }
-
-
     .password-content {
 
       position: relative;
@@ -571,9 +439,7 @@
 
       border-radius: 20px;
 
-      padding:
-        30px
-        25px;
+      padding: 30px 25px;
 
       max-width: 450px;
 
@@ -615,22 +481,13 @@
 
       text-align: center;
 
-      letter-spacing: 0.1em;
+      letter-spacing: 0.15em;
 
       border: 3px solid #000;
 
       border-radius: 12px;
 
-      background: #fff;
-
-      margin-bottom: 20px;
-
-    }
-
-
-    .password-input:focus {
-
-      outline: none;
+      margin-bottom: 25px;
 
     }
 
@@ -672,13 +529,13 @@
 
       background: #000;
 
-      color: #fff;
-
       border: none;
 
       border-radius: 10px;
 
-      font-size: 22px;
+      color: #fff;
+
+      font-size: 24px;
 
       cursor: pointer;
 
@@ -687,22 +544,22 @@
 
     .error-message {
 
-      display: none;
-
       text-align: center;
 
       color: #ff0000;
 
       font-weight: 600;
 
-      margin-top: 15px;
+      margin-top: 20px;
+
+      display: none;
 
     }
 
 
-    /* ========================= */
-    /* ADMIN PANEL */
-    /* ========================= */
+    /* ======================================
+       ADMIN
+    ====================================== */
 
     .admin-panel {
 
@@ -748,9 +605,7 @@
 
       border-radius: 20px;
 
-      padding:
-        25px
-        20px;
+      padding: 25px 20px;
 
     }
 
@@ -775,6 +630,8 @@
       font-size: 20px;
 
       font-weight: 800;
+
+      letter-spacing: 0.05em;
 
     }
 
@@ -835,8 +692,6 @@
 
       font-family: inherit;
 
-      background: #fff;
-
     }
 
 
@@ -856,7 +711,7 @@
 
       font-size: 16px;
 
-      font-weight: 700;
+      font-weight: 600;
 
       cursor: pointer;
 
@@ -903,14 +758,6 @@
 
     .video-list-item {
 
-      display: flex;
-
-      align-items: center;
-
-      justify-content: space-between;
-
-      gap: 10px;
-
       padding: 14px;
 
       background: #f5f5f5;
@@ -926,8 +773,6 @@
 
     .video-list-item-info {
 
-      flex: 1;
-
       min-width: 0;
 
     }
@@ -941,16 +786,16 @@
 
       overflow: hidden;
 
-      white-space: nowrap;
-
       text-overflow: ellipsis;
+
+      white-space: nowrap;
 
     }
 
 
     .video-list-item-url {
 
-      font-size: 11px;
+      font-size: 12px;
 
       color: #666;
 
@@ -958,65 +803,148 @@
 
       overflow: hidden;
 
-      white-space: nowrap;
-
       text-overflow: ellipsis;
+
+      white-space: nowrap;
 
     }
 
 
-    .video-list-item-actions {
+    .video-actions {
 
       display: flex;
 
-      gap: 6px;
+      gap: 8px;
+
+      margin-top: 12px;
 
     }
 
 
-    .small-edit-btn,
-    .video-list-item-delete {
+    .edit-btn {
 
-      width: 40px;
+      flex: 1;
 
-      height: 40px;
-
-      border-radius: 8px;
-
-      border: none;
-
-      color: #fff;
-
-      cursor: pointer;
-
-      font-size: 16px;
-
-    }
-
-
-    .small-edit-btn {
+      height: 42px;
 
       background: #000;
 
+      color: #fff;
+
+      border: none;
+
+      border-radius: 8px;
+
+      cursor: pointer;
+
+      font-weight: 700;
+
     }
 
 
     .video-list-item-delete {
 
+      flex: 1;
+
+      height: 42px;
+
       background: #ff0000;
+
+      color: #fff;
+
+      border: none;
+
+      border-radius: 8px;
+
+      cursor: pointer;
+
+      font-weight: 700;
 
     }
 
 
-    .status {
+    .export-import {
+
+      display: flex;
+
+      gap: 10px;
+
+      margin-top: 20px;
+
+      padding-top: 20px;
+
+      border-top: 2px solid #000;
+
+    }
+
+
+    .export-btn,
+    .import-btn {
+
+      flex: 1;
+
+      padding: 16px;
+
+      border: 2px solid #000;
+
+      border-radius: 10px;
+
+      background: #fff;
+
+      color: #000;
+
+      font-weight: 600;
+
+      cursor: pointer;
+
+      font-size: 14px;
+
+    }
+
+
+    .reset-btn {
+
+      width: 100%;
+
+      padding: 14px;
+
+      margin-top: 10px;
+
+      background: #fff;
+
+      color: #ff0000;
+
+      border: 2px solid #ff0000;
+
+      border-radius: 10px;
+
+      font-weight: 700;
+
+      cursor: pointer;
+
+    }
+
+
+    .status-message {
 
       text-align: center;
 
       padding: 15px;
 
-      color: #666;
+      color: #777;
 
       font-size: 14px;
+
+    }
+
+
+    @media (max-width: 500px) {
+
+      .admin-header h2 {
+
+        font-size: 18px;
+
+      }
 
     }
 
@@ -1030,9 +958,7 @@
 
   <div class="app-container">
 
-
     <div class="header">
-
 
       <div
         class="logo-icon"
@@ -1041,34 +967,9 @@
 
         <svg viewBox="0 0 24 24">
 
-          <path d="
-          M20 4
-          h-3.17
-          L15 2
-          H9
-          L7.17 4
-          H4
-          c-1.1 0-2 .9-2 2
-          v12
-          c0 1.1.9 2 2 2
-          h16
-          c1.1 0 2-.9 2-2
-          V6
-          c0-1.1-.9-2-2-2
-          z
-          M15 15.5
-          V13
-          H9
-          v2.5
-          L5.5 12
-          9 8.5
-          V11
-          h6
-          V8.5
-          l3.5 3.5
-          -3.5 3.5
-          z
-          "/>
+          <path
+            d="M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 11.5V13H9v2.5L5.5 12 9 8.5V11h6V8.5l3.5 3.5-3.5 3.5z"
+          />
 
         </svg>
 
@@ -1078,8 +979,9 @@
       <h1>POLYANA</h1>
 
 
-      <p>Video Editing & Motion</p>
-
+      <p>
+        Video Editing & Motion
+      </p>
 
     </div>
 
@@ -1089,18 +991,14 @@
       id="videoFeed"
     >
 
-      <div class="status">
+      <div class="status-message">
         Загрузка видео...
       </div>
 
     </div>
 
-
   </div>
 
-
-
-  <!-- TELEGRAM -->
 
   <a
     href="https://t.me/POLYANA_HUB"
@@ -1113,60 +1011,21 @@
       viewBox="0 0 24 24"
     >
 
-      <path d="
-      M12 2
-      C6.48 2 2 6.48 2 12
-      s4.48 10 10 10
-      10-4.48 10-10
-      S17.52 2 12 2
-      zm4.64 6.8
-      c-.15 1.58-.8 5.42-1.13 7.19
-      -.14.75-.42 1-.68 1.03
-      -.58.05-1.02-.38-1.58-.75
-      -.88-.58-1.38-.94-2.23-1.5
-      -.99-.65-.35-1.01.22-1.59
-      .15-.15 2.71-2.48 2.76-2.69
-      .01-.03.01-.14-.07-.2
-      -.08-.06-.19-.04-.27-.02
-      -.12.02-1.96 1.25-5.54 3.69
-      -.52.36-1 .53-1.42.52
-      -.47-.01-1.37-.26-2.03-.48
-      -.82-.27-1.47-.42-1.42-.88
-      .03-.24.38-.49 1.03-.75
-      4.06-1.77 6.77-2.94 8.13-3.51
-      3.87-1.6 4.67-1.88 5.19-1.89
-      .11 0 .37.03.54.17
-      .14.12.18.28.2.45
-      -.01.07-.01.14-.02.21
-      z
-      "/>
+      <path
+        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.38-.49 1.03-.75 4.06-1.77 6.77-2.94 8.13-3.51 3.87-1.6 4.67-1.88 5.19-1.89.11 0 .37.03.54.17.14.12.18.28.2.45-.01.07-.01.14-.02.21z"
+      />
 
     </svg>
 
   </a>
 
 
-
-  <!-- PASSWORD PANEL -->
+  <!-- PASSWORD -->
 
   <div
     class="password-panel"
     id="passwordPanel"
   >
-
-
-    <div class="glitch-bg">
-
-      <div class="glitch-line"></div>
-      <div class="glitch-line"></div>
-      <div class="glitch-line"></div>
-      <div class="glitch-line"></div>
-
-    </div>
-
-
-    <div class="crt-effect"></div>
-
 
     <button
       class="close-password"
@@ -1178,7 +1037,6 @@
 
     <div class="password-content">
 
-
       <h2 class="password-title">
         ПАНЕЛЬ УПРАВЛЕНИЯ
       </h2>
@@ -1188,7 +1046,7 @@
         type="password"
         class="password-input"
         id="passwordInput"
-        placeholder="ВВЕДИТЕ ADMIN SECRET"
+        placeholder="ВВЕДИТЕ ПАРОЛЬ"
         autocomplete="off"
       >
 
@@ -1208,28 +1066,23 @@
         НЕВЕРНЫЙ ПАРОЛЬ
       </div>
 
-
     </div>
-
 
   </div>
 
 
-
-  <!-- ADMIN PANEL -->
+  <!-- ADMIN -->
 
   <div
     class="admin-panel"
     id="adminPanel"
   >
 
-
     <div class="admin-content">
-
 
       <div class="admin-header">
 
-        <h2 id="adminTitle">
+        <h2>
           УПРАВЛЕНИЕ ВИДЕО
         </h2>
 
@@ -1244,22 +1097,20 @@
       </div>
 
 
-
       <div class="form-group">
 
         <label>
-          Ссылка на видео
+          Ссылка VK Видео / RUTUBE / Vimeo
         </label>
 
 
         <input
           type="text"
           id="videoUrl"
-          placeholder="Vimeo / VK Видео / RUTUBE"
+          placeholder="Вставь ссылку на видео..."
         >
 
       </div>
-
 
 
       <div class="form-group">
@@ -1278,37 +1129,34 @@
       </div>
 
 
-
       <div class="form-group">
 
         <label>
-          Формат видео
+          Формат
         </label>
 
 
         <select id="videoAspect">
 
           <option value="9:16">
-            Вертикальное — 9:16
+            Вертикальное (9:16)
           </option>
 
           <option value="16:9">
-            Горизонтальное — 16:9
+            Горизонтальное (16:9)
           </option>
 
           <option value="1:1">
-            Квадратное — 1:1
+            Квадратное (1:1)
           </option>
 
           <option value="4:3">
-            Классическое — 4:3
+            Классическое (4:3)
           </option>
 
         </select>
 
-
       </div>
-
 
 
       <button
@@ -1320,7 +1168,6 @@
       </button>
 
 
-
       <button
         class="cancel-edit-btn"
         id="cancelEditBtn"
@@ -1330,26 +1177,65 @@
       </button>
 
 
-
       <div
         class="video-list"
         id="videoList"
-      ></div>
+      >
 
+        <div class="status-message">
+          Загрузка...
+        </div>
+
+      </div>
+
+
+      <div class="export-import">
+
+        <button
+          class="export-btn"
+          onclick="exportData()"
+        >
+          ЭКСПОРТ JSON
+        </button>
+
+
+        <button
+          class="import-btn"
+          onclick="document.getElementById('importFile').click()"
+        >
+          ИМПОРТ JSON
+        </button>
+
+
+        <input
+          type="file"
+          id="importFile"
+          accept=".json"
+          style="display:none"
+          onchange="importData(event)"
+        >
+
+      </div>
+
+
+      <button
+        class="reset-btn"
+        onclick="resetVideos()"
+      >
+        СБРОСИТЬ ВСЕ ВИДЕО К ЗАВОДСКИМ
+      </button>
 
     </div>
 
-
   </div>
-
 
 
   <script>
 
 
-    /* ========================= */
-    /* TELEGRAM */
-    /* ========================= */
+    // ======================================
+    // TELEGRAM
+    // ======================================
 
     const tg =
       window.Telegram?.WebApp;
@@ -1364,305 +1250,100 @@
     }
 
 
-
-    /* ========================= */
-    /* API */
-    /* ========================= */
+    // ======================================
+    // API
+    // ======================================
 
     const API_URL =
       "https://polyana-video-api.another-galaxxy.workers.dev";
 
 
-    let ADMIN_SECRET = "";
+    // ======================================
+    // ПАРОЛЬ
+    // ======================================
 
+    const ADMIN_SECRET =
+      "HUB2026";
+
+
+    // ======================================
+    // STATE
+    // ======================================
 
     let videos = [];
 
-
     let editingVideoId = null;
 
-
     let logoClickCount = 0;
-
 
     let logoClickTimer = null;
 
 
+    // ======================================
+    // API REQUEST
+    // ======================================
 
-    /* ========================= */
-    /* SECURITY */
-    /* ========================= */
+    async function apiRequest(
+      path,
+      options = {}
+    ) {
 
-    function escapeHtml(text) {
-
-      return String(text || "")
-
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-    }
-
-
-
-    /* ========================= */
-    /* PLATFORM */
-    /* ========================= */
-
-    function detectPlatform(url) {
-
-      try {
-
-        const u =
-          new URL(url);
-
-
-        const host =
-          u.hostname
-            .replace(/^www\./, "")
-            .toLowerCase();
-
-
-        if (
-          host === "vimeo.com" ||
-          host === "player.vimeo.com"
-        ) {
-
-          return "vimeo";
-
-        }
-
-
-        if (
-          host === "vk.com" ||
-          host === "m.vk.com" ||
-          host === "vkvideo.ru"
-        ) {
-
-          return "vk";
-
-        }
-
-
-        if (
-          host === "rutube.ru" ||
-          host === "m.rutube.ru"
-        ) {
-
-          return "rutube";
-
-        }
-
-      }
-
-      catch (error) {
-
-        return null;
-
-      }
-
-
-      return null;
-
-    }
-
-
-
-    /* ========================= */
-    /* ASPECT */
-    /* ========================= */
-
-    function getAspectClass(aspect) {
-
-      const map = {
-
-        "9:16":
-          "ratio-portrait",
-
-        "16:9":
-          "ratio-landscape",
-
-        "1:1":
-          "ratio-square",
-
-        "4:3":
-          "ratio-4-3"
-
+      const headers = {
+        ...(options.headers || {})
       };
 
 
-      return map[aspect] ||
-        "ratio-portrait";
+      if (ADMIN_SECRET) {
 
-    }
-
-
-
-    /* ========================= */
-    /* VIMEO */
-    /* ========================= */
-
-    function createVimeoUrl(videoUrl) {
-
-      let url =
-        videoUrl.trim();
-
-
-      if (
-        url.includes("vimeo.com/") &&
-        !url.includes("player.vimeo.com/video/")
-      ) {
-
-        const match =
-          url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-
-
-        if (match) {
-
-          url =
-            "https://player.vimeo.com/video/" +
-            match[1];
-
-        }
+        headers.Authorization =
+          "Bearer " + ADMIN_SECRET;
 
       }
 
 
-      const separator =
-        url.includes("?")
-          ? "&"
-          : "?";
+      if (
+        options.body &&
+        !headers["Content-Type"]
+      ) {
+
+        headers["Content-Type"] =
+          "application/json";
+
+      }
 
 
-      return (
-        url +
-        separator +
-        "title=0" +
-        "&byline=0" +
-        "&portrait=0" +
-        "&badge=0" +
-        "&dnt=1" +
-        "&playsinline=1" +
-        "&autoplay=1" +
-        "&muted=1" +
-        "&loop=1"
-      );
-
-    }
-
-
-
-    /* ========================= */
-    /* VK */
-    /* ========================= */
-
-    function createVKUrl(videoUrl) {
-
-      return videoUrl;
-
-    }
-
-
-
-    /* ========================= */
-    /* RUTUBE */
-    /* ========================= */
-
-    function createRutubeUrl(videoUrl) {
-
-      let url =
-        videoUrl.trim();
-
-
-      try {
-
-        if (
-          url.includes("rutube.ru/video/")
-        ) {
-
-          const match =
-            url.match(
-              /rutube\.ru\/video\/([^/?#]+)/
-            );
-
-
-          if (match) {
-
-            return (
-              "https://rutube.ru/play/embed/" +
-              match[1]
-            );
-
+      const response =
+        await fetch(
+          API_URL + path,
+          {
+            ...options,
+            headers
           }
+        );
 
-        }
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Ошибка API"
+        );
 
       }
 
-      catch (error) {}
 
-
-      return url;
+      return data;
 
     }
 
 
-
-    /* ========================= */
-    /* EMBED URL */
-    /* ========================= */
-
-    function getEmbedUrl(video) {
-
-      const platform =
-        video.platform ||
-        detectPlatform(video.url);
-
-
-      if (
-        platform === "vimeo"
-      ) {
-
-        return createVimeoUrl(
-          video.url
-        );
-
-      }
-
-
-      if (
-        platform === "rutube"
-      ) {
-
-        return createRutubeUrl(
-          video.url
-        );
-
-      }
-
-
-      if (
-        platform === "vk"
-      ) {
-
-        return createVKUrl(
-          video.url
-        );
-
-      }
-
-
-      return video.url;
-
-    }
-
-
-
-    /* ========================= */
-    /* LOAD VIDEOS */
-    /* ========================= */
+    // ======================================
+    // ЗАГРУЗИТЬ ВИДЕО
+    // ======================================
 
     async function loadAllVideos() {
 
@@ -1673,7 +1354,7 @@
 
 
       feed.innerHTML = `
-        <div class="status">
+        <div class="status-message">
           Загрузка видео...
         </div>
       `;
@@ -1681,32 +1362,18 @@
 
       try {
 
-        const response =
+        const data =
           await fetch(
             API_URL + "/videos"
           );
 
 
-        const data =
-          await response.json();
-
-
-        if (
-          !data.success
-        ) {
-
-          throw new Error(
-            data.error ||
-            "Ошибка загрузки"
-          );
-
-        }
+        const result =
+          await data.json();
 
 
         videos =
-          Array.isArray(data.videos)
-            ? data.videos
-            : [];
+          result.videos || [];
 
 
         renderVideos();
@@ -1714,15 +1381,14 @@
 
         updateVideoList();
 
-      }
 
-      catch (error) {
+      } catch (error) {
 
         console.error(error);
 
 
         feed.innerHTML = `
-          <div class="status">
+          <div class="status-message">
             Не удалось загрузить видео
           </div>
         `;
@@ -1732,10 +1398,199 @@
     }
 
 
+    // ======================================
+    // HTML SAFE
+    // ======================================
 
-    /* ========================= */
-    /* RENDER VIDEOS */
-    /* ========================= */
+    function escapeHtml(value) {
+
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    // ======================================
+    // СОЗДАТЬ EMBED URL
+    // ======================================
+
+    function createEmbedUrl(video) {
+
+      const url =
+        String(video.url || "");
+
+
+      // ====================================
+      // VIMEO
+      // ====================================
+
+      if (video.platform === "vimeo") {
+
+        let vimeoUrl = url;
+
+
+        if (
+          url.includes("vimeo.com/") &&
+          !url.includes("player.vimeo.com")
+        ) {
+
+          const match =
+            url.match(
+              /vimeo\.com\/(?:video\/)?(\d+)/
+            );
+
+
+          if (match) {
+
+            vimeoUrl =
+              "https://player.vimeo.com/video/" +
+              match[1];
+
+          }
+
+        }
+
+
+        const separator =
+          vimeoUrl.includes("?")
+            ? "&"
+            : "?";
+
+
+        return (
+          vimeoUrl +
+          separator +
+          "title=0" +
+          "&byline=0" +
+          "&portrait=0" +
+          "&badge=0" +
+          "&dnt=1" +
+          "&playsinline=1" +
+          "&autoplay=1" +
+          "&muted=1" +
+          "&loop=1"
+        );
+
+      }
+
+
+      // ====================================
+      // RUTUBE
+      // ====================================
+
+      if (video.platform === "rutube") {
+
+        const match =
+          url.match(
+            /rutube\.ru\/video\/([a-zA-Z0-9]+)/i
+          );
+
+
+        if (match) {
+
+          return (
+            "https://rutube.ru/play/embed/" +
+            match[1]
+          );
+
+        }
+
+
+        return url;
+
+      }
+
+
+      // ====================================
+      // VK
+      // ====================================
+
+      if (video.platform === "vk") {
+
+        // Если уже embed-ссылка
+
+        if (
+          url.includes("video_ext.php")
+        ) {
+
+          return url;
+
+        }
+
+
+        // Обычная VK ссылка
+        // Например:
+        // vk.com/video-123_456
+
+        const match =
+          url.match(
+            /video(-?\d+)_(\d+)/
+          );
+
+
+        if (match) {
+
+          const oid =
+            match[1];
+
+          const id =
+            match[2];
+
+
+          return (
+            "https://vk.com/video_ext.php" +
+            "?oid=" + oid +
+            "&id=" + id +
+            "&hd=2" +
+            "&autoplay=1"
+          );
+
+        }
+
+
+        return url;
+
+      }
+
+
+      return url;
+
+    }
+
+
+    // ======================================
+    // ASPECT CLASS
+    // ======================================
+
+    function getAspectClass(aspect) {
+
+      switch (aspect) {
+
+        case "16:9":
+          return "ratio-landscape";
+
+        case "1:1":
+          return "ratio-square";
+
+        case "4:3":
+          return "ratio-4-3";
+
+        case "9:16":
+        default:
+          return "ratio-portrait";
+
+      }
+
+    }
+
+
+    // ======================================
+    // RENDER VIDEOS
+    // ======================================
 
     function renderVideos() {
 
@@ -1745,12 +1600,10 @@
         );
 
 
-      if (
-        videos.length === 0
-      ) {
+      if (!videos.length) {
 
         feed.innerHTML = `
-          <div class="status">
+          <div class="status-message">
             Пока нет видео
           </div>
         `;
@@ -1761,261 +1614,90 @@
 
 
       feed.innerHTML =
-        videos
-          .map(video => {
+        videos.map(video => {
+
+          const embedUrl =
+            createEmbedUrl(video);
 
 
-            const embedUrl =
-              getEmbedUrl(video);
+          const aspectClass =
+            getAspectClass(
+              video.aspect
+            );
 
 
-            const aspectClass =
-              getAspectClass(
-                video.aspect
-              );
+          return `
 
+            <div
+              class="video-card"
+              data-id="${escapeHtml(video.id)}"
+            >
 
-            return `
+              <button
+                class="delete-btn"
+                onclick="deleteVideo('${escapeHtml(video.id)}')"
+              >
+                ✕
+              </button>
+
 
               <div
-                class="video-card"
-                data-id="${escapeHtml(video.id)}"
+                class="video-wrapper ${aspectClass}"
               >
 
+                <iframe
 
-                <div class="video-actions">
+                  src="${escapeHtml(embedUrl)}"
 
+                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
 
-                  <button
-                    class="edit-btn"
-                    onclick="startEdit('${escapeHtml(video.id)}')"
-                    title="Редактировать"
-                  >
-                    ✎
-                  </button>
+                  allowfullscreen
 
+                  loading="lazy"
 
-                  <button
-                    class="delete-btn"
-                    onclick="deleteVideo('${escapeHtml(video.id)}')"
-                    title="Удалить"
-                  >
-                    ✕
-                  </button>
-
-
-                </div>
-
-
-
-                <div
-                  class="video-wrapper ${aspectClass}"
-                >
-
-
-                  <iframe
-
-                    src="${escapeHtml(embedUrl)}"
-
-                    allow="
-                      autoplay;
-                      fullscreen;
-                      picture-in-picture;
-                      encrypted-media
-                    "
-
-                    allowfullscreen
-
-                    loading="lazy"
-
-                  ></iframe>
-
-
-                </div>
-
-
-
-                <div class="caption">
-
-                  ${escapeHtml(video.title)}
-
-                </div>
-
+                ></iframe>
 
               </div>
 
-            `;
 
-          })
+              <div class="caption">
 
-          .join("");
+                ${escapeHtml(video.title)}
 
-    }
+              </div>
 
+            </div>
 
+          `;
 
-    /* ========================= */
-    /* PASSWORD */
-    /* ========================= */
-
-    function openPassword() {
-
-      document
-        .getElementById(
-          "passwordPanel"
-        )
-        .classList
-        .add("active");
-
-
-      setTimeout(() => {
-
-        document
-          .getElementById(
-            "passwordInput"
-          )
-          .focus();
-
-      }, 100);
+        }).join("");
 
     }
 
 
-
-    function closePassword() {
-
-      document
-        .getElementById(
-          "passwordPanel"
-        )
-        .classList
-        .remove("active");
-
-
-      document
-        .getElementById(
-          "passwordInput"
-        )
-        .value = "";
-
-
-      document
-        .getElementById(
-          "errorMessage"
-        )
-        .style.display =
-        "none";
-
-    }
-
-
-
-    function checkPassword() {
-
-      const password =
-        document
-          .getElementById(
-            "passwordInput"
-          )
-          .value
-          .trim();
-
-
-      if (!password) {
-
-        return;
-
-      }
-
-
-      ADMIN_SECRET =
-        password;
-
-
-      closePassword();
-
-
-      openAdmin();
-
-    }
-
-
-
-    /* ========================= */
-    /* ADMIN */
-    /* ========================= */
-
-    function openAdmin() {
-
-      document
-        .getElementById(
-          "adminPanel"
-        )
-        .classList
-        .add("active");
-
-
-      document.body
-        .classList
-        .add("admin-mode");
-
-
-      updateVideoList();
-
-    }
-
-
-
-    function closeAdmin() {
-
-      document
-        .getElementById(
-          "adminPanel"
-        )
-        .classList
-        .remove("active");
-
-
-      document.body
-        .classList
-        .remove("admin-mode");
-
-
-      cancelEdit();
-
-    }
-
-
-
-    /* ========================= */
-    /* SAVE VIDEO */
-    /* ========================= */
+    // ======================================
+    // SAVE VIDEO
+    // ======================================
 
     async function saveVideo() {
 
       const url =
         document
-          .getElementById(
-            "videoUrl"
-          )
+          .getElementById("videoUrl")
           .value
           .trim();
 
 
       const title =
         document
-          .getElementById(
-            "videoTitle"
-          )
+          .getElementById("videoTitle")
           .value
           .trim();
 
 
       const aspect =
         document
-          .getElementById(
-            "videoAspect"
-          )
+          .getElementById("videoAspect")
           .value;
 
 
@@ -2030,14 +1712,10 @@
       }
 
 
-      const platform =
-        detectPlatform(url);
-
-
-      if (!platform) {
+      if (!title) {
 
         alert(
-          "Разрешены только Vimeo, VK Видео и RUTUBE!"
+          "Напиши название видео!"
         );
 
         return;
@@ -2051,189 +1729,121 @@
         );
 
 
-      button.disabled = true;
+      const oldText =
+        button.textContent;
 
 
       button.textContent =
-        "ЗАГРУЗКА...";
+        "СОХРАНЕНИЕ...";
+
+
+      button.disabled = true;
 
 
       try {
 
-        let response;
+        if (editingVideoId) {
 
+          await apiRequest(
+            "/videos/" +
+            encodeURIComponent(
+              editingVideoId
+            ),
+            {
+              method: "PUT",
 
-        if (
-          editingVideoId
-        ) {
-
-          response =
-            await fetch(
-              API_URL +
-              "/videos/" +
-              encodeURIComponent(
-                editingVideoId
-              ),
-              {
-
-                method: "PUT",
-
-                headers: {
-
-                  "Content-Type":
-                    "application/json",
-
-                  "Authorization":
-                    "Bearer " +
-                    ADMIN_SECRET
-
-                },
-
-                body:
-                  JSON.stringify({
-
-                    url,
-
-                    title,
-
-                    aspect
-
-                  })
-
-              }
-            );
-
-        }
-
-        else {
-
-          response =
-            await fetch(
-              API_URL +
-              "/videos",
-              {
-
-                method: "POST",
-
-                headers: {
-
-                  "Content-Type":
-                    "application/json",
-
-                  "Authorization":
-                    "Bearer " +
-                    ADMIN_SECRET
-
-                },
-
-                body:
-                  JSON.stringify({
-
-                    url,
-
-                    title,
-
-                    aspect
-
-                  })
-
-              }
-            );
-
-        }
-
-
-        const data =
-          await response.json();
-
-
-        if (
-          response.status === 401
-        ) {
-
-          throw new Error(
-            "Неверный ADMIN SECRET"
+              body:
+                JSON.stringify({
+                  url,
+                  title,
+                  aspect
+                })
+            }
           );
 
-        }
 
-
-        if (
-          !data.success
-        ) {
-
-          throw new Error(
-            data.error ||
-            "Ошибка сохранения"
+          alert(
+            "Видео обновлено!"
           );
 
+
+          cancelEdit();
+
+        } else {
+
+          await apiRequest(
+            "/videos",
+            {
+              method: "POST",
+
+              body:
+                JSON.stringify({
+                  url,
+                  title,
+                  aspect
+                })
+            }
+          );
+
+
+          alert(
+            "Видео добавлено!"
+          );
+
+
+          document
+            .getElementById("videoUrl")
+            .value = "";
+
+
+          document
+            .getElementById("videoTitle")
+            .value = "";
+
         }
-
-
-        cancelEdit();
 
 
         await loadAllVideos();
 
 
-        alert(
-          editingVideoId
-            ? "Видео обновлено!"
-            : "Видео добавлено!"
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(error);
-
+      } catch (error) {
 
         alert(
-          error.message ||
-          "Ошибка сохранения"
+          error.message
         );
 
-      }
-
-      finally {
+      } finally {
 
         button.disabled = false;
 
 
-        button.textContent =
-          editingVideoId
-            ? "СОХРАНИТЬ ИЗМЕНЕНИЯ"
-            : "ДОБАВИТЬ ВИДЕО";
+        if (!editingVideoId) {
+
+          button.textContent =
+            oldText;
+
+        }
 
       }
 
     }
 
 
+    // ======================================
+    // EDIT VIDEO
+    // ======================================
 
-    /* ========================= */
-    /* EDIT VIDEO */
-    /* ========================= */
-
-    function startEdit(id) {
+    function editVideo(id) {
 
       const video =
         videos.find(
-          v =>
-            String(v.id) ===
-            String(id)
+          item =>
+            String(item.id) === String(id)
         );
 
 
       if (!video) {
-
-        alert(
-          "Видео не найдено"
-        );
-
         return;
-
       }
 
 
@@ -2242,210 +1852,119 @@
 
 
       document
-        .getElementById(
-          "videoUrl"
-        )
+        .getElementById("videoUrl")
         .value =
-        video.url;
+          video.url;
 
 
       document
-        .getElementById(
-          "videoTitle"
-        )
+        .getElementById("videoTitle")
         .value =
-        video.title;
+          video.title;
 
 
       document
-        .getElementById(
-          "videoAspect"
-        )
+        .getElementById("videoAspect")
         .value =
-        video.aspect;
+          video.aspect;
 
 
       document
-        .getElementById(
-          "adminTitle"
-        )
+        .getElementById("saveVideoBtn")
         .textContent =
-        "РЕДАКТИРОВАНИЕ ВИДЕО";
+          "СОХРАНИТЬ ИЗМЕНЕНИЯ";
 
 
       document
-        .getElementById(
-          "saveVideoBtn"
-        )
-        .textContent =
-        "СОХРАНИТЬ ИЗМЕНЕНИЯ";
-
-
-      document
-        .getElementById(
-          "cancelEditBtn"
-        )
+        .getElementById("cancelEditBtn")
         .style.display =
-        "block";
-
-
-      openAdmin();
+          "block";
 
 
       window.scrollTo({
-
         top: 0,
-
         behavior: "smooth"
-
       });
 
     }
 
 
+    // ======================================
+    // CANCEL EDIT
+    // ======================================
 
     function cancelEdit() {
 
-      editingVideoId =
-        null;
+      editingVideoId = null;
 
 
       document
-        .getElementById(
-          "videoUrl"
-        )
-        .value =
-        "";
+        .getElementById("videoUrl")
+        .value = "";
 
 
       document
-        .getElementById(
-          "videoTitle"
-        )
-        .value =
-        "";
+        .getElementById("videoTitle")
+        .value = "";
 
 
       document
-        .getElementById(
-          "videoAspect"
-        )
-        .value =
-        "9:16";
+        .getElementById("videoAspect")
+        .value = "9:16";
 
 
       document
-        .getElementById(
-          "adminTitle"
-        )
+        .getElementById("saveVideoBtn")
         .textContent =
-        "УПРАВЛЕНИЕ ВИДЕО";
+          "ДОБАВИТЬ ВИДЕО";
 
 
       document
-        .getElementById(
-          "saveVideoBtn"
-        )
-        .textContent =
-        "ДОБАВИТЬ ВИДЕО";
-
-
-      document
-        .getElementById(
-          "cancelEditBtn"
-        )
+        .getElementById("cancelEditBtn")
         .style.display =
-        "none";
+          "none";
 
     }
 
 
-
-    /* ========================= */
-    /* DELETE */
-    /* ========================= */
+    // ======================================
+    // DELETE
+    // ======================================
 
     async function deleteVideo(id) {
 
       if (
-        !ADMIN_SECRET
-      ) {
-
-        alert(
-          "Сначала войди в панель управления"
-        );
-
-        return;
-
-      }
-
-
-      const confirmed =
-        confirm(
+        !confirm(
           "Удалить это видео?"
-        );
-
-
-      if (!confirmed) {
-
+        )
+      ) {
         return;
-
       }
 
 
       try {
 
-        const response =
-          await fetch(
-            API_URL +
-            "/videos/" +
-            encodeURIComponent(id),
-            {
-
-              method:
-                "DELETE",
-
-              headers: {
-
-                "Authorization":
-                  "Bearer " +
-                  ADMIN_SECRET
-
-              }
-
-            }
-          );
-
-
-        const data =
-          await response.json();
-
-
-        if (
-          !data.success
-        ) {
-
-          throw new Error(
-            data.error ||
-            "Ошибка удаления"
-          );
-
-        }
+        await apiRequest(
+          "/videos/" +
+          encodeURIComponent(id),
+          {
+            method: "DELETE"
+          }
+        );
 
 
         await loadAllVideos();
 
 
-      }
+        alert(
+          "Видео удалено"
+        );
 
-      catch (error) {
 
-        console.error(error);
-
+      } catch (error) {
 
         alert(
-          error.message ||
-          "Ошибка удаления"
+          error.message
         );
 
       }
@@ -2453,10 +1972,9 @@
     }
 
 
-
-    /* ========================= */
-    /* ADMIN VIDEO LIST */
-    /* ========================= */
+    // ======================================
+    // VIDEO LIST
+    // ======================================
 
     function updateVideoList() {
 
@@ -2466,20 +1984,11 @@
         );
 
 
-      if (!list) {
-
-        return;
-
-      }
-
-
-      if (
-        videos.length === 0
-      ) {
+      if (!videos.length) {
 
         list.innerHTML = `
-          <div class="status">
-            Нет видео
+          <div class="status-message">
+            Пока нет добавленных видео
           </div>
         `;
 
@@ -2489,88 +1998,387 @@
 
 
       list.innerHTML =
-        videos
-          .map(video => `
+        videos.map(video => `
 
+          <div class="video-list-item">
 
-            <div class="video-list-item">
+            <div class="video-list-item-info">
 
+              <div class="video-list-item-title">
 
-              <div class="video-list-item-info">
-
-
-                <div class="video-list-item-title">
-
-                  ${escapeHtml(video.title)}
-
-                </div>
-
-
-                <div class="video-list-item-url">
-
-                  ${escapeHtml(video.url)}
-
-                </div>
-
+                ${escapeHtml(video.title)}
 
               </div>
 
 
+              <div class="video-list-item-url">
 
-              <div class="video-list-item-actions">
-
-
-                <button
-                  class="small-edit-btn"
-                  onclick="startEdit('${escapeHtml(video.id)}')"
-                  title="Редактировать"
-                >
-                  ✎
-                </button>
-
-
-                <button
-                  class="video-list-item-delete"
-                  onclick="deleteVideo('${escapeHtml(video.id)}')"
-                  title="Удалить"
-                >
-                  ✕
-                </button>
-
+                ${escapeHtml(video.url)}
 
               </div>
-
 
             </div>
 
 
-          `)
+            <div class="video-actions">
 
-          .join("");
+              <button
+                class="edit-btn"
+                onclick="editVideo('${escapeHtml(video.id)}')"
+              >
+                РЕДАКТИРОВАТЬ
+              </button>
+
+
+              <button
+                class="video-list-item-delete"
+                onclick="deleteVideo('${escapeHtml(video.id)}')"
+              >
+                УДАЛИТЬ
+              </button>
+
+            </div>
+
+          </div>
+
+        `).join("");
 
     }
 
 
+    // ======================================
+    // RESET
+    // ======================================
 
-    /* ========================= */
-    /* LOGO 3 CLICKS */
-    /* ========================= */
+    async function resetVideos() {
+
+      if (
+        !confirm(
+          "Это удалит текущие изменения и восстановит старые заводские видео. Продолжить?"
+        )
+      ) {
+        return;
+      }
+
+
+      try {
+
+        await apiRequest(
+          "/reset",
+          {
+            method: "POST"
+          }
+        );
+
+
+        await loadAllVideos();
+
+
+        alert(
+          "Старые видео восстановлены!"
+        );
+
+
+      } catch (error) {
+
+        alert(
+          error.message
+        );
+
+      }
+
+    }
+
+
+    // ======================================
+    // EXPORT
+    // ======================================
+
+    function exportData() {
+
+      const blob =
+        new Blob(
+          [
+            JSON.stringify(
+              videos,
+              null,
+              2
+            )
+          ],
+          {
+            type:
+              "application/json"
+          }
+        );
+
+
+      const a =
+        document.createElement("a");
+
+
+      a.href =
+        URL.createObjectURL(blob);
+
+
+      a.download =
+        "polyana-videos.json";
+
+
+      a.click();
+
+
+      URL.revokeObjectURL(
+        a.href
+      );
+
+    }
+
+
+    // ======================================
+    // IMPORT
+    // ======================================
+
+    async function importData(event) {
+
+      const file =
+        event.target.files[0];
+
+
+      if (!file) {
+        return;
+      }
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        async function(e) {
+
+          try {
+
+            const data =
+              JSON.parse(
+                e.target.result
+              );
+
+
+            if (!Array.isArray(data)) {
+
+              alert(
+                "Неверный JSON файл"
+              );
+
+              return;
+
+            }
+
+
+            if (
+              !confirm(
+                "Импорт добавит видео в Cloudflare. Продолжить?"
+              )
+            ) {
+              return;
+            }
+
+
+            for (
+              const video of data
+            ) {
+
+              await apiRequest(
+                "/videos",
+                {
+                  method: "POST",
+
+                  body:
+                    JSON.stringify({
+                      url:
+                        video.url,
+
+                      title:
+                        video.title ||
+                        "Без названия",
+
+                      aspect:
+                        video.aspect ||
+                        "9:16"
+                    })
+                }
+              );
+
+            }
+
+
+            await loadAllVideos();
+
+
+            alert(
+              "Импорт завершён!"
+            );
+
+
+          } catch (error) {
+
+            alert(
+              "Ошибка импорта: " +
+              error.message
+            );
+
+          }
+
+        };
+
+
+      reader.readAsText(file);
+
+    }
+
+
+    // ======================================
+    // PASSWORD
+    // ======================================
+
+    function openPassword() {
+
+      document
+        .getElementById("passwordPanel")
+        .classList.add("active");
+
+
+      setTimeout(
+        () => {
+
+          document
+            .getElementById("passwordInput")
+            .focus();
+
+        },
+        100
+      );
+
+    }
+
+
+    function closePassword() {
+
+      document
+        .getElementById("passwordPanel")
+        .classList.remove("active");
+
+
+      document
+        .getElementById("passwordInput")
+        .value = "";
+
+
+      document
+        .getElementById("errorMessage")
+        .style.display =
+          "none";
+
+    }
+
+
+    function checkPassword() {
+
+      const password =
+        document
+          .getElementById("passwordInput")
+          .value;
+
+
+      if (
+        password === ADMIN_SECRET
+      ) {
+
+        closePassword();
+
+        openAdmin();
+
+      } else {
+
+        document
+          .getElementById("errorMessage")
+          .style.display =
+            "block";
+
+
+        document
+          .getElementById("passwordInput")
+          .value =
+            "";
+
+
+        setTimeout(
+          () => {
+
+            document
+              .getElementById("errorMessage")
+              .style.display =
+                "none";
+
+          },
+          2000
+        );
+
+      }
+
+    }
+
+
+    // ======================================
+    // ADMIN
+    // ======================================
+
+    function openAdmin() {
+
+      document
+        .getElementById("adminPanel")
+        .classList.add("active");
+
+
+      document.body
+        .classList.add("admin-mode");
+
+
+      updateVideoList();
+
+    }
+
+
+    function closeAdmin() {
+
+      document
+        .getElementById("adminPanel")
+        .classList.remove("active");
+
+
+      document.body
+        .classList.remove("admin-mode");
+
+
+      cancelEdit();
+
+    }
+
+
+    // ======================================
+    // LOGO 3 CLICKS
+    // ======================================
 
     document
-      .getElementById(
-        "logoIcon"
-      )
+      .getElementById("logoIcon")
       .addEventListener(
         "click",
         function() {
 
-
           logoClickCount++;
 
 
-          if (
-            logoClickTimer
-          ) {
+          if (logoClickTimer) {
 
             clearTimeout(
               logoClickTimer
@@ -2580,11 +2388,14 @@
 
 
           logoClickTimer =
-            setTimeout(() => {
+            setTimeout(
+              () => {
 
-              logoClickCount = 0;
+                logoClickCount = 0;
 
-            }, 700);
+              },
+              700
+            );
 
 
           if (
@@ -2592,7 +2403,6 @@
           ) {
 
             logoClickCount = 0;
-
 
             openPassword();
 
@@ -2602,15 +2412,12 @@
       );
 
 
-
-    /* ========================= */
-    /* ENTER PASSWORD */
-    /* ========================= */
+    // ======================================
+    // ENTER PASSWORD
+    // ======================================
 
     document
-      .getElementById(
-        "passwordInput"
-      )
+      .getElementById("passwordInput")
       .addEventListener(
         "keypress",
         function(e) {
@@ -2627,10 +2434,9 @@
       );
 
 
-
-    /* ========================= */
-    /* START */
-    /* ========================= */
+    // ======================================
+    // START
+    // ======================================
 
     document.addEventListener(
       "DOMContentLoaded",
@@ -2642,4 +2448,5 @@
 
 
 </body>
+
 </html>
