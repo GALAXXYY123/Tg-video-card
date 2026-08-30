@@ -5,609 +5,1745 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <title>POLYANA | Video Editor</title>
-  
+
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a1a1a' width='100' height='100' rx='20'/><path fill='%23fff' d='M35 35h30v30H35V35zm-5 10h5v5h-5v-5zm35 0h5v5h-5v-5z'/><circle fill='none' stroke='%23fff' stroke-width='3' cx='50' cy='50' r='20'/></svg>">
-  
+
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
   <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body {
-      height: 100%; margin: 0; background-color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: #111; -webkit-font-smoothing: antialiased; overscroll-behavior: none;
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background-color: #ffffff;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+      color: #111;
+      -webkit-font-smoothing: antialiased;
+      overscroll-behavior: none;
+    }
+
     .app-container {
-      max-width: 600px; margin: 0 auto; min-height: 100vh;
+      max-width: 600px;
+      margin: 0 auto;
+      min-height: 100vh;
       padding-top: env(safe-area-inset-top);
       padding-bottom: calc(120px + env(safe-area-inset-bottom));
     }
+
     .header {
-      text-align: center; padding: 40px 20px 30px;
-      display: flex; flex-direction: column; align-items: center; gap: 15px;
+      text-align: center;
+      padding: 40px 20px 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
     }
+
     .logo-icon {
-      width: 60px; height: 60px; background: #1a1a1a; border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; user-select: none; transition: transform 0.2s;
+      width: 60px;
+      height: 60px;
+      background: #1a1a1a;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s;
     }
-    .logo-icon:active { transform: scale(0.95); }
-    .logo-icon svg { width: 35px; height: 35px; fill: #fff; }
+
+    .logo-icon:active {
+      transform: scale(0.95);
+    }
+
+    .logo-icon svg {
+      width: 35px;
+      height: 35px;
+      fill: #fff;
+    }
+
     .header h1 {
-      font-size: 28px; font-weight: 800; letter-spacing: 0.15em;
-      text-transform: uppercase; margin: 0;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin: 0;
     }
-    .header p { font-size: 14px; color: #666; margin-top: 0; font-weight: 500; }
-    .video-feed { display: flex; flex-direction: column; gap: 40px; padding: 0 20px; }
-    .video-card { display: flex; flex-direction: column; align-items: center; position: relative; }
+
+    .header p {
+      font-size: 14px;
+      color: #666;
+      margin-top: 0;
+      font-weight: 500;
+    }
+
+    .video-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      padding: 0 20px;
+    }
+
+    .video-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
     .video-wrapper {
-      width: 100%; background: #f5f5f5; border-radius: 16px;
-      overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      width: 100%;
+      background: #f5f5f5;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
     }
-    .ratio-landscape { aspect-ratio: 16/9; }
-    .ratio-portrait { aspect-ratio: 9/16; max-height: 75vh; }
-    .ratio-square { aspect-ratio: 1/1; }
-    .ratio-4-3 { aspect-ratio: 4/3; }
-    iframe { width: 100%; height: 100%; border: none; display: block; }
+
+    .ratio-landscape {
+      aspect-ratio: 16 / 9;
+    }
+
+    .ratio-portrait {
+      aspect-ratio: 9 / 16;
+      max-height: 75vh;
+    }
+
+    .ratio-square {
+      aspect-ratio: 1 / 1;
+    }
+
+    .ratio-4-3 {
+      aspect-ratio: 4 / 3;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
     .caption {
-      margin-top: 12px; font-size: 14px; font-weight: 600; color: #333;
-      text-align: center; letter-spacing: 0.05em; text-transform: uppercase;
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      text-align: center;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
+
     .delete-btn {
-      position: absolute; top: 10px; right: 10px; width: 44px; height: 44px;
-      background: rgba(255,0,0,0.9); border: none; border-radius: 10px;
-      color: white; font-size: 24px; cursor: pointer; display: none;
-      align-items: center; justify-content: center; z-index: 10;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 44px;
+      height: 44px;
+      background: rgba(255,0,0,0.9);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
     }
-    body.admin-mode .delete-btn { display: flex; }
+
+    body.admin-mode .delete-btn {
+      display: flex;
+    }
+
     .tg-button {
-      position: fixed; bottom: calc(30px + env(safe-area-inset-bottom)); left: 50%;
-      transform: translateX(-50%); background: #000; color: #fff; text-decoration: none;
-      width: 60px; height: 60px; border-radius: 16px; display: flex;
-      align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-      transition: all 0.3s ease; z-index: 100;
+      position: fixed;
+      bottom: calc(30px + env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      background: #000;
+      color: #fff;
+      text-decoration: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      z-index: 100;
     }
-    .tg-button:active { transform: translateX(-50%) scale(0.95); background: #333; }
-    .tg-icon { width: 28px; height: 28px; fill: #fff; }
+
+    .tg-button:active {
+      transform: translateX(-50%) scale(0.95);
+      background: #333;
+    }
+
+    .tg-icon {
+      width: 28px;
+      height: 28px;
+      fill: #fff;
+    }
 
     .password-panel {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: #fff; z-index: 1000; overflow: hidden;
-      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      z-index: 1000;
+      overflow: hidden;
+      padding:
+        env(safe-area-inset-top)
+        env(safe-area-inset-right)
+        env(safe-area-inset-bottom)
+        env(safe-area-inset-left);
     }
-    .password-panel.active { display: flex; align-items: center; justify-content: center; }
+
+    .password-panel.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .crt-effect {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.03), rgba(0,0,0,0.03) 1px, transparent 1px, transparent 2px);
-      pointer-events: none; z-index: 1;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(0,0,0,0.03),
+          rgba(0,0,0,0.03) 1px,
+          transparent 1px,
+          transparent 2px
+        );
+      pointer-events: none;
+      z-index: 1;
     }
-    .glitch-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; }
+
+    .glitch-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
     .glitch-line {
-      position: absolute; width: 100%; height: 2px; background: rgba(0,0,0,0.1);
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: rgba(0,0,0,0.1);
       animation: glitchMove 3s infinite;
     }
-    .glitch-line:nth-child(1) { top: 20%; animation-delay: 0s; }
-    .glitch-line:nth-child(2) { top: 40%; animation-delay: 0.5s; }
-    .glitch-line:nth-child(3) { top: 60%; animation-delay: 1s; }
-    .glitch-line:nth-child(4) { top: 80%; animation-delay: 1.5s; }
+
+    .glitch-line:nth-child(1) {
+      top: 20%;
+      animation-delay: 0s;
+    }
+
+    .glitch-line:nth-child(2) {
+      top: 40%;
+      animation-delay: 0.5s;
+    }
+
+    .glitch-line:nth-child(3) {
+      top: 60%;
+      animation-delay: 1s;
+    }
+
+    .glitch-line:nth-child(4) {
+      top: 80%;
+      animation-delay: 1.5s;
+    }
+
     @keyframes glitchMove {
-      0%, 100% { transform: translateX(0); opacity: 0.3; }
-      50% { transform: translateX(-10px); opacity: 0.6; }
+      0%,100% {
+        transform: translateX(0);
+        opacity: 0.3;
+      }
+
+      50% {
+        transform: translateX(-10px);
+        opacity: 0.6;
+      }
     }
+
     .password-content {
-      position: relative; z-index: 2; background: #fff; border: 3px solid #000;
-      border-radius: 20px; padding: 30px 25px; max-width: 450px; width: 95%;
-      box-shadow: 0 0 0 1px #000, 0 20px 60px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 2;
+      background: #fff;
+      border: 3px solid #000;
+      border-radius: 20px;
+      padding: 30px 25px;
+      max-width: 450px;
+      width: 95%;
+      box-shadow:
+        0 0 0 1px #000,
+        0 20px 60px rgba(0,0,0,0.2);
     }
+
     .password-title {
-      font-size: 24px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase;
-      text-align: center; margin-bottom: 30px; position: relative; animation: glitchText 2s infinite;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 30px;
+      animation: glitchText 2s infinite;
     }
+
     @keyframes glitchText {
-      0%, 90%, 100% { text-shadow: none; transform: translate(0); }
-      92% { text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; transform: translate(-2px, 0); }
-      94% { text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; transform: translate(2px, 0); }
-      96% { text-shadow: none; transform: translate(0); }
+      0%,90%,100% {
+        text-shadow: none;
+        transform: translate(0);
+      }
+
+      92% {
+        text-shadow:
+          -2px 0 #ff0000,
+          2px 0 #00ffff;
+        transform: translate(-2px,0);
+      }
+
+      94% {
+        text-shadow:
+          2px 0 #ff0000,
+          -2px 0 #00ffff;
+        transform: translate(2px,0);
+      }
+
+      96% {
+        text-shadow: none;
+        transform: translate(0);
+      }
     }
+
     .password-input {
-      width: 100%; padding: 18px; font-size: 16px; font-weight: 600; text-align: center;
-      letter-spacing: 0.2em; border: 3px solid #000; border-radius: 12px; background: #fff;
-      color: #000; font-family: inherit; box-sizing: border-box; -webkit-appearance: none;
+      width: 100%;
+      padding: 18px;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 0.2em;
+      border: 3px solid #000;
+      border-radius: 12px;
+      background: #fff;
+      color: #000;
+      font-family: inherit;
       margin-bottom: 25px;
     }
-    .password-input:focus { outline: none; border-color: #000; box-shadow: 0 0 0 4px rgba(0,0,0,0.1); }
+
     .password-btn {
-      width: 100%; padding: 18px; background: #000; color: #fff; border: none;
-      border-radius: 12px; font-size: 16px; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; cursor: pointer; -webkit-appearance: none;
+      width: 100%;
+      padding: 18px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      cursor: pointer;
     }
-    .password-btn:active { background: #333; transform: scale(0.98); }
+
     .close-password {
-      position: absolute; top: 20px; right: 20px; width: 44px; height: 44px;
-      background: #000; border: none; border-radius: 10px; color: #fff;
-      font-size: 24px; cursor: pointer; z-index: 3;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      background: #000;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 3;
     }
+
     .error-message {
-      text-align: center; color: #ff0000; font-weight: 600; margin-top: 20px;
-      display: none; animation: shake 0.5s; font-size: 14px;
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); }
+      text-align: center;
+      color: #ff0000;
+      font-weight: 600;
+      margin-top: 20px;
+      display: none;
     }
 
     .admin-panel {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: #fff; z-index: 1001; overflow-y: auto; -webkit-overflow-scrolling: touch;
-      padding: calc(env(safe-area-inset-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 20px);
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      z-index: 1001;
+      overflow-y: auto;
+      padding:
+        calc(env(safe-area-inset-top) + 20px)
+        20px
+        calc(env(safe-area-inset-bottom) + 20px);
     }
-    .admin-panel.active { display: block; }
+
+    .admin-panel.active {
+      display: block;
+    }
+
     .admin-content {
-      max-width: 600px; margin: 0 auto; background: #fff; border: 3px solid #000;
-      border-radius: 20px; padding: 25px 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      border: 3px solid #000;
+      border-radius: 20px;
+      padding: 25px 20px;
     }
-    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-    .admin-header h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 0.05em; }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .admin-header h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+
     .close-btn {
-      width: 44px; height: 44px; background: #000; border: none; border-radius: 10px;
-      color: #fff; font-size: 24px; cursor: pointer;
+      width: 44px;
+      height: 44px;
+      background: #000;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
     }
-    .form-group { margin-bottom: 20px; }
-    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
-    .form-group input, .form-group select {
-      width: 100%; padding: 16px; border: 2px solid #000; border-radius: 12px;
-      font-size: 16px; box-sizing: border-box; font-family: inherit; -webkit-appearance: none;
+
+    .form-group {
+      margin-bottom: 20px;
     }
-    .form-group input:focus, .form-group select:focus { outline: none; border-color: #000; box-shadow: 0 0 0 4px rgba(0,0,0,0.1); }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid #000;
+      border-radius: 12px;
+      font-size: 16px;
+      font-family: inherit;
+      background: #fff;
+    }
+
     .add-btn {
-      width: 100%; padding: 18px; background: #000; color: #fff; border: none;
-      border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 20px;
+      width: 100%;
+      padding: 18px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 20px;
     }
-    .add-btn:active { background: #333; transform: scale(0.98); }
-    .video-list { border-top: 2px solid #000; padding-top: 20px; }
+
+    .video-list {
+      border-top: 2px solid #000;
+      padding-top: 20px;
+    }
+
     .video-list-item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 14px; background: #f5f5f5; border: 2px solid #000; border-radius: 10px; margin-bottom: 10px;
+      padding: 14px;
+      background: #f5f5f5;
+      border: 2px solid #000;
+      border-radius: 10px;
+      margin-bottom: 10px;
     }
-    .video-list-item-info { flex: 1; min-width: 0; }
-    .video-list-item-title { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .video-list-item-url { font-size: 12px; color: #666; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .video-list-item-info {
+      margin-bottom: 12px;
+    }
+
+    .video-list-item-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .video-list-item-url {
+      font-size: 12px;
+      color: #666;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .video-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .video-edit-btn,
     .video-list-item-delete {
-      width: 44px; height: 44px; background: #ff0000; border: 2px solid #000; border-radius: 10px;
-      color: #fff; cursor: pointer; font-size: 20px; margin-left: 10px; flex-shrink: 0;
+      flex: 1;
+      height: 44px;
+      border: 2px solid #000;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
     }
-    .export-import { display: flex; gap: 10px; margin-top: 20px; padding-top: 20px; border-top: 2px solid #000; }
-    .export-btn, .import-btn {
-      flex: 1; padding: 16px; border: 2px solid #000; border-radius: 10px; background: #fff;
-      color: #000; font-weight: 600; cursor: pointer; font-size: 14px;
+
+    .video-edit-btn {
+      background: #fff;
+      color: #000;
     }
-    .export-btn:active, .import-btn:active { background: #f0f0f0; transform: scale(0.98); }
-    .reset-btn {
-      width: 100%; padding: 12px; margin-top: 10px; background: #fff; color: #ff0000; 
-      border: 2px solid #ff0000; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 14px;
+
+    .video-list-item-delete {
+      background: #ff0000;
+      color: #fff;
     }
+
+    .cancel-edit-btn {
+      width: 100%;
+      padding: 14px;
+      background: #fff;
+      border: 2px solid #000;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .status {
+      text-align: center;
+      padding: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+    }
+
   </style>
 </head>
+
 <body>
 
   <div class="app-container">
+
     <div class="header">
+
       <div class="logo-icon" id="logoIcon">
-        <svg viewBox="0 0 24 24"><path d="M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 11.5V13H9v2.5L5.5 12 9 8.5V11h6V8.5l3.5 3.5-3.5 3.5z"/></svg>
+        <svg viewBox="0 0 24 24">
+          <path d="M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 11.5V13H9v2.5L5.5 12 9 8.5V11h6V8.5l3.5 3.5-3.5 3.5z"/>
+        </svg>
       </div>
+
       <h1>POLYANA</h1>
+
       <p>Video Editing & Motion</p>
+
     </div>
+
     <div class="video-feed" id="videoFeed"></div>
+
   </div>
 
-  <a href="https://t.me/POLYANA_HUB" class="tg-button" target="_blank">
-    <svg class="tg-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.38-.49 1.03-.75 4.06-1.77 6.77-2.94 8.13-3.51 3.87-1.6 4.67-1.88 5.19-1.89.11 0 .37.03.54.17.14.12.18.28.2.45-.01.07-.01.14-.02.21z"/></svg>
+
+  <a
+    href="https://t.me/POLYANA_HUB"
+    class="tg-button"
+    target="_blank"
+  >
+    <svg class="tg-icon" viewBox="0 0 24 24">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.38-.49 1.03-.75 4.06-1.77 6.77-2.94 8.13-3.51 3.87-1.6 4.67-1.88 5.19-1.89.11 0 .37.03.54.17.14.12.18.28.2.45-.01.07-.01.14-.02.21z"/>
+    </svg>
   </a>
 
+
+  <!-- ПАРОЛЬ -->
+
   <div class="password-panel" id="passwordPanel">
-    <div class="glitch-bg"><div class="glitch-line"></div><div class="glitch-line"></div><div class="glitch-line"></div><div class="glitch-line"></div></div>
-    <div class="crt-effect"></div>
-    <button class="close-password" onclick="closePassword()">✕</button>
-    <div class="password-content">
-      <h2 class="password-title">ПАНЕЛЬ УПРАВЛЕНИЯ</h2>
-      <input type="password" class="password-input" id="passwordInput" placeholder="ВВЕДИТЕ ПАРОЛЬ" autocomplete="off">
-      <button class="password-btn" onclick="checkPassword()">ВОЙТИ</button>
-      <div class="error-message" id="errorMessage">НЕВЕРНЫЙ ПАРОЛЬ</div>
+
+    <div class="glitch-bg">
+      <div class="glitch-line"></div>
+      <div class="glitch-line"></div>
+      <div class="glitch-line"></div>
+      <div class="glitch-line"></div>
     </div>
+
+    <div class="crt-effect"></div>
+
+    <button
+      class="close-password"
+      onclick="closePassword()"
+    >
+      ✕
+    </button>
+
+    <div class="password-content">
+
+      <h2 class="password-title">
+        ПАНЕЛЬ УПРАВЛЕНИЯ
+      </h2>
+
+      <input
+        type="password"
+        class="password-input"
+        id="passwordInput"
+        placeholder="ВВЕДИТЕ ПАРОЛЬ"
+        autocomplete="off"
+      >
+
+      <button
+        class="password-btn"
+        onclick="checkPassword()"
+      >
+        ВОЙТИ
+      </button>
+
+      <div
+        class="error-message"
+        id="errorMessage"
+      >
+        НЕВЕРНЫЙ ПАРОЛЬ
+      </div>
+
+    </div>
+
   </div>
+
+
+  <!-- АДМИНКА -->
 
   <div class="admin-panel" id="adminPanel">
+
     <div class="admin-content">
+
       <div class="admin-header">
+
         <h2>УПРАВЛЕНИЕ ВИДЕО</h2>
-        <button class="close-btn" onclick="closeAdmin()">✕</button>
+
+        <button
+          class="close-btn"
+          onclick="closeAdmin()"
+        >
+          ✕
+        </button>
+
       </div>
+
+
       <div class="form-group">
-        <label>Ссылка YouTube или Vimeo</label>
-        <input type="text" id="videoUrl" placeholder="https://youtube.com/... или https://vimeo.com/...">
-      </div>
-      <div class="form-group">
-        <label>Название</label>
-        <input type="text" id="videoTitle" placeholder="Например: Tattoo Process">
-      </div>
-      <div class="form-group">
-        <label>Формат</label>
-        <select id="videoAspect">
-          <option value="ratio-portrait">Вертикальное (9:16)</option>
-          <option value="ratio-landscape">Горизонтальное (16:9)</option>
-          <option value="ratio-square">Квадратное (1:1)</option>
-          <option value="ratio-4-3">Классическое (4:3)</option>
+
+        <label>Платформа</label>
+
+        <select id="videoPlatform">
+          <option value="vimeo">Vimeo</option>
+          <option value="vk">VK Видео</option>
+          <option value="rutube">RUTUBE</option>
         </select>
+
       </div>
-      <button class="add-btn" onclick="addVideo()">ДОБАВИТЬ ВИДЕО</button>
-      <div class="video-list" id="videoList"></div>
-      <div class="export-import">
-        <button class="export-btn" onclick="exportData()">ЭКСПОРТ JSON</button>
-        <button class="import-btn" onclick="document.getElementById('importFile').click()">ИМПОРТ JSON</button>
-        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+
+
+      <div class="form-group">
+
+        <label>Ссылка на видео</label>
+
+        <input
+          type="text"
+          id="videoUrl"
+          placeholder="Вставь ссылку Vimeo / VK Видео / RUTUBE"
+        >
+
       </div>
-      <button class="reset-btn" onclick="resetVideos()">СБРОСИТЬ ВСЕ ВИДЕО К ЗАВОДСКИМ</button>
+
+
+      <div class="form-group">
+
+        <label>Название</label>
+
+        <input
+          type="text"
+          id="videoTitle"
+          placeholder="Например: Tattoo Process"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>Формат</label>
+
+        <select id="videoAspect">
+
+          <option value="ratio-portrait">
+            Вертикальное (9:16)
+          </option>
+
+          <option value="ratio-landscape">
+            Горизонтальное (16:9)
+          </option>
+
+          <option value="ratio-square">
+            Квадратное (1:1)
+          </option>
+
+          <option value="ratio-4-3">
+            Классическое (4:3)
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <button
+        class="add-btn"
+        id="saveVideoBtn"
+        onclick="saveVideo()"
+      >
+        ДОБАВИТЬ ВИДЕО
+      </button>
+
+
+      <button
+        class="cancel-edit-btn"
+        id="cancelEditBtn"
+        onclick="cancelEdit()"
+      >
+        ОТМЕНИТЬ РЕДАКТИРОВАНИЕ
+      </button>
+
+
+      <div
+        class="status"
+        id="statusMessage"
+      ></div>
+
+
+      <div
+        class="video-list"
+        id="videoList"
+      ></div>
+
     </div>
+
   </div>
 
-  <script>
-    const tg = window.Telegram?.WebApp;
-    if (tg) { tg.ready(); tg.expand(); }
 
-    const API_BASE = "https://polyana-video-api.another-galaxxy.workers.dev";
 
-    // Текущие ролики остаются как базовое портфолио.
-    // Новые ролики из Cloudflare появляются ПЕРЕД ними у всех посетителей.
-    const defaultVideos = [
-      { url: "https://player.vimeo.com/video/1137819132", aspect: "ratio-landscape", title: "AI Motion / Experimental", id: 'ai', platform: 'vimeo' },
-      { url: "https://player.vimeo.com/video/1222329449?h=8d7a524287", aspect: "ratio-4-3", title: "SVADBA KREEM", id: 'svadba', platform: 'vimeo' },
-      { url: "https://player.vimeo.com/video/1222328524", aspect: "ratio-portrait", title: "SABOTAGE HHHB", id: 'sabotage', platform: 'vimeo' },
-      { url: "https://player.vimeo.com/video/1137811725", aspect: "ratio-landscape", title: "Tattoo Process / Karma", id: 'karma', platform: 'vimeo' },
-      { url: "https://player.vimeo.com/video/1137818000", aspect: "ratio-portrait", title: "Underground / Lifestyle", id: 'underground', platform: 'vimeo' },
-      { url: "https://player.vimeo.com/video/1137814296", aspect: "ratio-landscape", title: "Tattoo Session / Details", id: 'details', platform: 'vimeo' },
-      { url: "https://player.vimeo.com/video/1137821627", aspect: "ratio-square", title: "Bar & Food / Reels", id: 'bar', platform: 'vimeo' }
-    ];
+<script>
 
-    let cloudVideos = [];
-    let adminSecret = "";
-    let logoClickCount = 0;
-    let logoClickTimer = null;
+  const tg = window.Telegram?.WebApp;
 
-    function escapeHtml(value = "") {
-      return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+  if (tg) {
+    tg.ready();
+    tg.expand();
+  }
+
+
+  /*
+    ============================================
+    CLOUDFLARE API
+    ============================================
+  */
+
+  const API_URL =
+    "https://polyana-video-api.another-galaxxy.workers.dev";
+
+
+  /*
+    ============================================
+    СОСТОЯНИЕ
+    ============================================
+  */
+
+  let videos = [];
+
+  let adminSecret = "";
+
+  let editingId = null;
+
+  let logoClickCount = 0;
+
+  let logoClickTimer = null;
+
+
+  /*
+    ============================================
+    ЗАГРУЗКА ВИДЕО
+    ============================================
+  */
+
+  async function loadAllVideos() {
+
+    const feed =
+      document.getElementById("videoFeed");
+
+    feed.innerHTML =
+      "<p style='text-align:center;color:#999;'>Загрузка...</p>";
+
+    try {
+
+      const response =
+        await fetch(API_URL + "/videos");
+
+      const data =
+        await response.json();
+
+      videos =
+        Array.isArray(data.videos)
+          ? data.videos
+          : [];
+
+      renderVideos();
+
+    } catch (error) {
+
+      console.error(error);
+
+      feed.innerHTML =
+        "<p style='text-align:center;color:#999;'>Не удалось загрузить видео</p>";
+
     }
 
-    function aspectClass(aspect) {
-      const map = {
-        "9:16": "ratio-portrait",
-        "16:9": "ratio-landscape",
-        "1:1": "ratio-square",
-        "4:3": "ratio-4-3",
-        "ratio-portrait": "ratio-portrait",
-        "ratio-landscape": "ratio-landscape",
-        "ratio-square": "ratio-square",
-        "ratio-4-3": "ratio-4-3"
-      };
-      return map[aspect] || "ratio-portrait";
+  }
+
+
+  /*
+    ============================================
+    ОТРИСОВКА
+    ============================================
+  */
+
+  function renderVideos() {
+
+    const feed =
+      document.getElementById("videoFeed");
+
+    if (!videos.length) {
+
+      feed.innerHTML =
+        "<p style='text-align:center;color:#999;'>Пока нет видео</p>";
+
+      return;
+
     }
 
-    function detectPlatform(videoUrl) {
-      try {
-        const url = new URL(videoUrl);
-        const host = url.hostname.replace(/^www\./, "").toLowerCase();
-        if (host === "youtube.com" || host === "m.youtube.com" || host === "youtu.be") return "youtube";
-        if (host === "vimeo.com" || host === "player.vimeo.com") return "vimeo";
-      } catch (_) {}
-      return null;
-    }
 
-    function createVimeoUrl(videoUrl) {
-      try {
-        const url = new URL(videoUrl);
-        const id = url.pathname.split("/").filter(Boolean).pop();
-        if (!id) return videoUrl;
+    feed.innerHTML =
+      videos.map(video => {
 
-        const embed = new URL(`https://player.vimeo.com/video/${id}`);
-        for (const [key, value] of url.searchParams.entries()) {
-          if (key === "h") embed.searchParams.set(key, value);
-        }
-
-        embed.searchParams.set("title", "0");
-        embed.searchParams.set("byline", "0");
-        embed.searchParams.set("portrait", "0");
-        embed.searchParams.set("badge", "0");
-        embed.searchParams.set("dnt", "1");
-        embed.searchParams.set("playsinline", "1");
-        embed.searchParams.set("autoplay", "1");
-        embed.searchParams.set("muted", "1");
-        embed.searchParams.set("loop", "1");
-        return embed.toString();
-      } catch (_) {
-        return videoUrl;
-      }
-    }
-
-    function createYouTubeUrl(videoUrl) {
-      try {
-        const url = new URL(videoUrl);
-        let id = "";
-
-        if (url.hostname.replace(/^www\./, "") === "youtu.be") {
-          id = url.pathname.split("/").filter(Boolean)[0] || "";
-        } else {
-          id = url.searchParams.get("v") || "";
-          if (!id && url.pathname.includes("/embed/")) {
-            id = url.pathname.split("/embed/")[1].split("/")[0];
-          }
-          if (!id && url.pathname.includes("/shorts/")) {
-            id = url.pathname.split("/shorts/")[1].split("/")[0];
-          }
-        }
-
-        if (!id) return videoUrl;
-
-        const origin = encodeURIComponent(window.location.origin);
-        return `https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1&mute=1&loop=1&playlist=${encodeURIComponent(id)}&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&origin=${origin}`;
-      } catch (_) {
-        return videoUrl;
-      }
-    }
-
-    function createEmbedUrl(video) {
-      const platform = video.platform || detectPlatform(video.url);
-      return platform === "youtube"
-        ? createYouTubeUrl(video.url)
-        : createVimeoUrl(video.url);
-    }
-
-    async function fetchCloudVideos() {
-      try {
-        const response = await fetch(`${API_BASE}/videos`, { cache: "no-store" });
-        if (!response.ok) throw new Error("API unavailable");
-
-        const data = await response.json();
-        cloudVideos = Array.isArray(data.videos) ? data.videos : [];
-      } catch (error) {
-        console.error("Не удалось загрузить видео из Cloudflare:", error);
-        cloudVideos = [];
-      }
-
-      loadAllVideos();
-      updateVideoList();
-    }
-
-    function loadAllVideos() {
-      const videoLinks = [...cloudVideos, ...defaultVideos];
-      const feed = document.getElementById('videoFeed');
-
-      feed.innerHTML = videoLinks.map(video => {
-        const isCloudVideo = !String(video.id).match(/^(ai|svadba|sabotage|karma|underground|details|bar)$/);
         return `
-          <div class="video-card" data-id="${escapeHtml(video.id)}">
-            ${isCloudVideo ? `<button class="delete-btn" onclick="deleteVideo('${String(video.id).replace(/'/g, "\\'")}')">✕</button>` : ""}
-            <div class="video-wrapper ${aspectClass(video.aspect)}">
-              <iframe
-                src="${escapeHtml(createEmbedUrl(video))}"
-                title="${escapeHtml(video.title || "Video")}"
-                allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-                allowfullscreen
-                loading="lazy">
-              </iframe>
+          <div
+            class="video-card"
+            data-id="${escapeHtml(video.id)}"
+          >
+
+            <button
+              class="delete-btn"
+              onclick="deleteVideo('${escapeJs(video.id)}')"
+            >
+              ✕
+            </button>
+
+            <div
+              class="video-wrapper ${video.aspect || "ratio-portrait"}"
+            >
+
+              ${createVideoIframe(video)}
+
             </div>
-            <div class="caption">${escapeHtml(video.title || "VIDEO")}</div>
+
+            <div class="caption">
+              ${escapeHtml(video.title || "")}
+            </div>
+
           </div>
         `;
-      }).join('');
-    }
 
-    async function addVideo() {
-      const url = document.getElementById('videoUrl').value.trim();
-      const title = document.getElementById('videoTitle').value.trim();
-      const aspect = document.getElementById('videoAspect').value;
+      }).join("");
 
-      if (!url || !title) {
-        alert('Заполни ссылку и название!');
-        return;
-      }
+  }
 
-      if (!adminSecret) {
-        alert('Сначала войди в панель управления.');
-        return;
-      }
 
-      const platform = detectPlatform(url);
-      if (!platform) {
-        alert('Разрешены только ссылки YouTube и Vimeo.');
-        return;
-      }
+  /*
+    ============================================
+    ПЛЕЕРЫ
+    ============================================
+  */
 
-      const button = document.querySelector('.add-btn');
-      const oldText = button.textContent;
-      button.textContent = 'ДОБАВЛЯЮ...';
-      button.disabled = true;
+  function createVideoIframe(video) {
 
-      try {
-        const response = await fetch(`${API_BASE}/videos`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${adminSecret}`
-          },
-          body: JSON.stringify({
-            url,
-            title,
-            aspect
-          })
-        });
+    const url =
+      createEmbedUrl(
+        video.platform,
+        video.url
+      );
 
-        const data = await response.json();
+    if (!url) {
 
-        if (!response.ok || !data.success) {
-          throw new Error(data.error || "Ошибка добавления");
-        }
-
-        document.getElementById('videoUrl').value = '';
-        document.getElementById('videoTitle').value = '';
-
-        await fetchCloudVideos();
-      } catch (error) {
-        alert(`Ошибка: ${error.message}`);
-      } finally {
-        button.textContent = oldText;
-        button.disabled = false;
-      }
-    }
-
-    async function deleteVideo(id) {
-      if (!adminSecret) return;
-      if (!confirm('Удалить это видео у всех посетителей сайта?')) return;
-
-      try {
-        const response = await fetch(`${API_BASE}/videos/${encodeURIComponent(id)}`, {
-          method: "DELETE",
-          headers: {
-            "Authorization": `Bearer ${adminSecret}`
-          }
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.error || "Ошибка удаления");
-        }
-
-        await fetchCloudVideos();
-      } catch (error) {
-        alert(`Ошибка: ${error.message}`);
-      }
-    }
-
-    function updateVideoList() {
-      const list = document.getElementById('videoList');
-
-      if (cloudVideos.length === 0) {
-        list.innerHTML = '<p style="text-align:center;color:#999;">Пока нет добавленных через Cloudflare видео</p>';
-        return;
-      }
-
-      list.innerHTML = cloudVideos.map(video => `
-        <div class="video-list-item">
-          <div class="video-list-item-info">
-            <div class="video-list-item-title">${escapeHtml(video.title || "VIDEO")}</div>
-            <div class="video-list-item-url">${escapeHtml(video.url)}</div>
-          </div>
-          <button class="video-list-item-delete" onclick="deleteVideo('${String(video.id).replace(/'/g, "\\'")}')">✕</button>
+      return `
+        <div style="
+          padding:30px;
+          text-align:center;
+          color:#777;
+        ">
+          Не удалось создать плеер
         </div>
-      `).join('');
+      `;
+
     }
 
-    async function verifySecret(secret) {
-      // Безопасная проверка: не удаляет реальное видео.
-      const response = await fetch(`${API_BASE}/videos/__auth_check__`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${secret}`
+
+    return `
+      <iframe
+        src="${escapeHtml(url)}"
+        allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+        allowfullscreen
+        loading="lazy"
+      ></iframe>
+    `;
+
+  }
+
+
+  function createEmbedUrl(platform, originalUrl) {
+
+    if (!originalUrl) return "";
+
+
+    /*
+      VIMEO
+    */
+
+    if (platform === "vimeo") {
+
+      let url =
+        originalUrl.trim();
+
+      let videoId = "";
+
+      const match =
+        url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+
+      if (match) {
+
+        videoId =
+          match[1];
+
+      }
+
+      if (!videoId) {
+
+        const playerMatch =
+          url.match(/video\/(\d+)/);
+
+        if (playerMatch) {
+
+          videoId =
+            playerMatch[1];
+
         }
-      });
 
-      // 404 означает: секрет верный, но такого видео нет.
-      return response.status === 404;
-    }
-
-    function openPassword() {
-      document.getElementById('passwordPanel').classList.add('active');
-      setTimeout(() => document.getElementById('passwordInput').focus(), 100);
-    }
-
-    function closePassword() {
-      document.getElementById('passwordPanel').classList.remove('active');
-      document.getElementById('passwordInput').value = '';
-      document.getElementById('errorMessage').style.display = 'none';
-    }
-
-    async function checkPassword() {
-      const input = document.getElementById('passwordInput');
-      const secret = input.value.trim();
-
-      if (!secret) return;
-
-      const button = document.querySelector('.password-btn');
-      const oldText = button.textContent;
-      button.textContent = 'ПРОВЕРКА...';
-      button.disabled = true;
-
-      try {
-        const ok = await verifySecret(secret);
-
-        if (!ok) throw new Error("Неверный пароль");
-
-        adminSecret = secret;
-        closePassword();
-        openAdmin();
-      } catch (_) {
-        document.getElementById('errorMessage').style.display = 'block';
-        input.value = '';
-        setTimeout(() => {
-          document.getElementById('errorMessage').style.display = 'none';
-        }, 2500);
-      } finally {
-        button.textContent = oldText;
-        button.disabled = false;
       }
+
+      if (!videoId) {
+
+        return url;
+
+      }
+
+
+      const hashMatch =
+        url.match(/[?&]h=([^&]+)/);
+
+      const hash =
+        hashMatch
+          ? "&h=" + hashMatch[1]
+          : "";
+
+
+      return (
+        "https://player.vimeo.com/video/" +
+        videoId +
+        "?autoplay=1" +
+        "&muted=1" +
+        "&loop=1" +
+        "&autopause=0" +
+        "&playsinline=1" +
+        "&title=0" +
+        "&byline=0" +
+        "&portrait=0" +
+        hash
+      );
+
     }
 
-    function openAdmin() {
-      document.getElementById('adminPanel').classList.add('active');
-      document.body.classList.add('admin-mode');
+
+    /*
+      VK ВИДЕО
+
+      Можно вставлять готовую embed-ссылку:
+      https://vkvideo.ru/video_ext.php?...
+    */
+
+    if (platform === "vk") {
+
+      if (
+        originalUrl.includes("video_ext.php")
+      ) {
+
+        return originalUrl;
+
+      }
+
+
+      return originalUrl;
+
+    }
+
+
+    /*
+      RUTUBE
+    */
+
+    if (platform === "rutube") {
+
+      const match =
+        originalUrl.match(
+          /rutube\.ru\/video\/([a-zA-Z0-9_-]+)/
+        );
+
+      if (match) {
+
+        return (
+          "https://rutube.ru/play/embed/" +
+          match[1]
+        );
+
+      }
+
+      return originalUrl;
+
+    }
+
+
+    return originalUrl;
+
+  }
+
+
+  /*
+    ============================================
+    СОХРАНЕНИЕ ВИДЕО
+    ============================================
+  */
+
+  async function saveVideo() {
+
+    const platform =
+      document.getElementById("videoPlatform").value;
+
+    const url =
+      document.getElementById("videoUrl").value.trim();
+
+    const title =
+      document.getElementById("videoTitle").value.trim();
+
+    const aspect =
+      document.getElementById("videoAspect").value;
+
+
+    if (!url || !title) {
+
+      alert(
+        "Заполни ссылку и название!"
+      );
+
+      return;
+
+    }
+
+
+    const payload = {
+
+      platform,
+      url,
+      title,
+      aspect
+
+    };
+
+
+    try {
+
+      let response;
+
+
+      /*
+        ДОБАВЛЕНИЕ
+      */
+
+      if (!editingId) {
+
+        response =
+          await fetch(
+            API_URL + "/videos",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+
+                "Authorization":
+                  "Bearer " + adminSecret
+              },
+
+              body:
+                JSON.stringify(payload)
+            }
+          );
+
+      }
+
+
+      /*
+        РЕДАКТИРОВАНИЕ
+      */
+
+      else {
+
+        response =
+          await fetch(
+            API_URL +
+            "/videos/" +
+            encodeURIComponent(editingId),
+            {
+              method: "PUT",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+
+                "Authorization":
+                  "Bearer " + adminSecret
+              },
+
+              body:
+                JSON.stringify(payload)
+            }
+          );
+
+      }
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Ошибка сохранения"
+        );
+
+      }
+
+
+      showStatus(
+        editingId
+          ? "ВИДЕО ОБНОВЛЕНО"
+          : "ВИДЕО ДОБАВЛЕНО"
+      );
+
+
+      cancelEdit();
+
+      await loadAllVideos();
+
       updateVideoList();
+
     }
 
-    function closeAdmin() {
-      document.getElementById('adminPanel').classList.remove('active');
-      document.body.classList.remove('admin-mode');
-      adminSecret = "";
+    catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка: " +
+        error.message
+      );
+
     }
 
-    // Оставляем старые кнопки экспорта/импорта скрытыми от логики,
-    // потому что источником данных теперь является Cloudflare KV.
-    function exportData() {
-      const blob = new Blob([JSON.stringify(cloudVideos, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'polyana-cloud-videos.json';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
+  }
 
-    function importData() {
-      alert('Импорт отключен: теперь видео добавляются напрямую ссылкой через Cloudflare.');
-    }
 
-    function resetVideos() {
-      alert('Сброс отключен, чтобы случайно не удалить общее портфолио. Удаляй нужные видео кнопкой ✕.');
-    }
+  /*
+    ============================================
+    УДАЛЕНИЕ
+    ============================================
+  */
 
-    document.getElementById('logoIcon').addEventListener('click', function() {
-      logoClickCount++;
-      if (logoClickTimer) clearTimeout(logoClickTimer);
-      logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 600);
+  async function deleteVideo(id) {
 
-      if (logoClickCount >= 3) {
-        logoClickCount = 0;
-        openPassword();
+    if (
+      !confirm(
+        "Удалить это видео?"
+      )
+    ) return;
+
+
+    try {
+
+      const response =
+        await fetch(
+          API_URL +
+          "/videos/" +
+          encodeURIComponent(id),
+          {
+            method: "DELETE",
+
+            headers: {
+              "Authorization":
+                "Bearer " + adminSecret
+            }
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Ошибка удаления"
+        );
+
       }
+
+
+      await loadAllVideos();
+
+      updateVideoList();
+
+    }
+
+    catch (error) {
+
+      alert(
+        "Не удалось удалить видео: " +
+        error.message
+      );
+
+    }
+
+  }
+
+
+  /*
+    ============================================
+    РЕДАКТИРОВАНИЕ
+    ============================================
+  */
+
+  function editVideo(id) {
+
+    const video =
+      videos.find(
+        item =>
+          String(item.id) === String(id)
+      );
+
+
+    if (!video) return;
+
+
+    editingId =
+      video.id;
+
+
+    document
+      .getElementById("videoPlatform")
+      .value =
+      video.platform || "vimeo";
+
+
+    document
+      .getElementById("videoUrl")
+      .value =
+      video.url || "";
+
+
+    document
+      .getElementById("videoTitle")
+      .value =
+      video.title || "";
+
+
+    document
+      .getElementById("videoAspect")
+      .value =
+      video.aspect ||
+      "ratio-portrait";
+
+
+    document
+      .getElementById("saveVideoBtn")
+      .textContent =
+      "СОХРАНИТЬ ИЗМЕНЕНИЯ";
+
+
+    document
+      .getElementById("cancelEditBtn")
+      .style.display =
+      "block";
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
     });
 
-    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') checkPassword();
-    });
+  }
 
-    document.addEventListener('DOMContentLoaded', fetchCloudVideos);
-  </script>
+
+  function cancelEdit() {
+
+    editingId = null;
+
+
+    document
+      .getElementById("videoUrl")
+      .value = "";
+
+
+    document
+      .getElementById("videoTitle")
+      .value = "";
+
+
+    document
+      .getElementById("videoPlatform")
+      .value = "vimeo";
+
+
+    document
+      .getElementById("videoAspect")
+      .value = "ratio-portrait";
+
+
+    document
+      .getElementById("saveVideoBtn")
+      .textContent =
+      "ДОБАВИТЬ ВИДЕО";
+
+
+    document
+      .getElementById("cancelEditBtn")
+      .style.display =
+      "none";
+
+  }
+
+
+  /*
+    ============================================
+    СПИСОК В АДМИНКЕ
+    ============================================
+  */
+
+  function updateVideoList() {
+
+    const list =
+      document.getElementById("videoList");
+
+
+    if (!videos.length) {
+
+      list.innerHTML =
+        `
+        <p style="
+          text-align:center;
+          color:#999;
+        ">
+          Нет видео
+        </p>
+        `;
+
+      return;
+
+    }
+
+
+    list.innerHTML =
+      videos.map(video => {
+
+        return `
+          <div class="video-list-item">
+
+            <div class="video-list-item-info">
+
+              <div class="video-list-item-title">
+                ${escapeHtml(video.title || "")}
+              </div>
+
+              <div class="video-list-item-url">
+                ${escapeHtml(video.url || "")}
+              </div>
+
+            </div>
+
+            <div class="video-actions">
+
+              <button
+                class="video-edit-btn"
+                onclick="editVideo('${escapeJs(video.id)}')"
+              >
+                ✎ РЕДАКТИРОВАТЬ
+              </button>
+
+              <button
+                class="video-list-item-delete"
+                onclick="deleteVideo('${escapeJs(video.id)}')"
+              >
+                ✕
+              </button>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
+
+  }
+
+
+  /*
+    ============================================
+    СТАТУС
+    ============================================
+  */
+
+  function showStatus(text) {
+
+    const status =
+      document.getElementById(
+        "statusMessage"
+      );
+
+
+    status.textContent =
+      text;
+
+    status.style.display =
+      "block";
+
+
+    setTimeout(() => {
+
+      status.style.display =
+        "none";
+
+    }, 2500);
+
+  }
+
+
+  /*
+    ============================================
+    ПАРОЛЬ
+    ============================================
+  */
+
+  function openPassword() {
+
+    document
+      .getElementById("passwordPanel")
+      .classList.add("active");
+
+
+    setTimeout(() => {
+
+      document
+        .getElementById("passwordInput")
+        .focus();
+
+    }, 100);
+
+  }
+
+
+  function closePassword() {
+
+    document
+      .getElementById("passwordPanel")
+      .classList.remove("active");
+
+
+    document
+      .getElementById("passwordInput")
+      .value = "";
+
+
+    document
+      .getElementById("errorMessage")
+      .style.display =
+      "none";
+
+  }
+
+
+  async function checkPassword() {
+
+    const password =
+      document
+        .getElementById("passwordInput")
+        .value;
+
+
+    if (!password) return;
+
+
+    adminSecret =
+      password;
+
+
+    /*
+      Проверяем пароль через API
+    */
+
+    try {
+
+      const response =
+        await fetch(
+          API_URL + "/videos",
+          {
+            headers: {
+              "Authorization":
+                "Bearer " + adminSecret
+            }
+          }
+        );
+
+
+      /*
+        Если GET публичный,
+        просто открываем админку.
+
+        Реальная проверка секрета
+        всё равно будет при POST/PUT/DELETE.
+      */
+
+      closePassword();
+
+      openAdmin();
+
+    }
+
+    catch (error) {
+
+      document
+        .getElementById("errorMessage")
+        .style.display =
+        "block";
+
+    }
+
+  }
+
+
+  /*
+    ============================================
+    АДМИНКА
+    ============================================
+  */
+
+  function openAdmin() {
+
+    document
+      .getElementById("adminPanel")
+      .classList.add("active");
+
+
+    document.body
+      .classList.add("admin-mode");
+
+
+    updateVideoList();
+
+  }
+
+
+  function closeAdmin() {
+
+    document
+      .getElementById("adminPanel")
+      .classList.remove("active");
+
+
+    document.body
+      .classList.remove("admin-mode");
+
+
+    cancelEdit();
+
+  }
+
+
+  /*
+    ============================================
+    3 КЛИКА ПО ЛОГОТИПУ
+    ============================================
+  */
+
+  document
+    .getElementById("logoIcon")
+    .addEventListener(
+      "click",
+      function() {
+
+        logoClickCount++;
+
+
+        if (logoClickTimer) {
+
+          clearTimeout(
+            logoClickTimer
+          );
+
+        }
+
+
+        logoClickTimer =
+          setTimeout(
+            () => {
+
+              logoClickCount = 0;
+
+            },
+            700
+          );
+
+
+        if (
+          logoClickCount >= 3
+        ) {
+
+          logoClickCount = 0;
+
+          openPassword();
+
+        }
+
+      }
+    );
+
+
+  /*
+    ENTER
+  */
+
+  document
+    .getElementById("passwordInput")
+    .addEventListener(
+      "keypress",
+      function(event) {
+
+        if (
+          event.key === "Enter"
+        ) {
+
+          checkPassword();
+
+        }
+
+      }
+    );
+
+
+  /*
+    ============================================
+    ЗАЩИТА HTML
+    ============================================
+  */
+
+  function escapeHtml(value) {
+
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  function escapeJs(value) {
+
+    return String(value ?? "")
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'");
+
+  }
+
+
+  /*
+    ============================================
+    START
+    ============================================
+  */
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    loadAllVideos
+  );
+
+</script>
+
 </body>
 </html>
