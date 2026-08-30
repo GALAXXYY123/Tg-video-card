@@ -223,8 +223,8 @@
         <button class="close-btn" onclick="closeAdmin()">✕</button>
       </div>
       <div class="form-group">
-        <label>Ссылка Vimeo</label>
-        <input type="text" id="videoUrl" placeholder="https://player.vimeo.com/video/123456789">
+        <label>Ссылка YouTube или Vimeo</label>
+        <input type="text" id="videoUrl" placeholder="https://youtube.com/... или https://vimeo.com/...">
       </div>
       <div class="form-group">
         <label>Название</label>
@@ -254,155 +254,360 @@
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
 
-    const PASSWORD = 'HUB2026';
-    
-    const aiVideo = { url: "https://player.vimeo.com/video/1137819132", aspect: "ratio-landscape", title: "AI Motion / Experimental", id: 'ai' };
+    const API_BASE = "https://polyana-video-api.another-galaxxy.workers.dev";
 
+    // Текущие ролики остаются как базовое портфолио.
+    // Новые ролики из Cloudflare появляются ПЕРЕД ними у всех посетителей.
     const defaultVideos = [
-      { url: "https://player.vimeo.com/video/1222329449?h=8d7a524287", aspect: "ratio-4-3", title: "SVADBA KREEM", id: 'svadba' },
-      { url: "https://player.vimeo.com/video/1222328524", aspect: "ratio-portrait", title: "SABOTAGE HHHB", id: 'sabotage' },
-      { url: "https://player.vimeo.com/video/1137811725", aspect: "ratio-landscape", title: "Tattoo Process / Karma", id: 'karma' },
-      { url: "https://player.vimeo.com/video/1137818000", aspect: "ratio-portrait", title: "Underground / Lifestyle", id: 'underground' },
-      { url: "https://player.vimeo.com/video/1137814296", aspect: "ratio-landscape", title: "Tattoo Session / Details", id: 'details' },
-      { url: "https://player.vimeo.com/video/1137821627", aspect: "ratio-square", title: "Bar & Food / Reels", id: 'bar' }
+      { url: "https://player.vimeo.com/video/1137819132", aspect: "ratio-landscape", title: "AI Motion / Experimental", id: 'ai', platform: 'vimeo' },
+      { url: "https://player.vimeo.com/video/1222329449?h=8d7a524287", aspect: "ratio-4-3", title: "SVADBA KREEM", id: 'svadba', platform: 'vimeo' },
+      { url: "https://player.vimeo.com/video/1222328524", aspect: "ratio-portrait", title: "SABOTAGE HHHB", id: 'sabotage', platform: 'vimeo' },
+      { url: "https://player.vimeo.com/video/1137811725", aspect: "ratio-landscape", title: "Tattoo Process / Karma", id: 'karma', platform: 'vimeo' },
+      { url: "https://player.vimeo.com/video/1137818000", aspect: "ratio-portrait", title: "Underground / Lifestyle", id: 'underground', platform: 'vimeo' },
+      { url: "https://player.vimeo.com/video/1137814296", aspect: "ratio-landscape", title: "Tattoo Session / Details", id: 'details', platform: 'vimeo' },
+      { url: "https://player.vimeo.com/video/1137821627", aspect: "ratio-square", title: "Bar & Food / Reels", id: 'bar', platform: 'vimeo' }
     ];
 
-    let otherVideos = JSON.parse(localStorage.getItem('polyanaVideos')) || [...defaultVideos];
-    let videoLinks = [];
+    let cloudVideos = [];
+    let adminSecret = "";
     let logoClickCount = 0;
     let logoClickTimer = null;
 
+    function escapeHtml(value = "") {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function aspectClass(aspect) {
+      const map = {
+        "9:16": "ratio-portrait",
+        "16:9": "ratio-landscape",
+        "1:1": "ratio-square",
+        "4:3": "ratio-4-3",
+        "ratio-portrait": "ratio-portrait",
+        "ratio-landscape": "ratio-landscape",
+        "ratio-square": "ratio-square",
+        "ratio-4-3": "ratio-4-3"
+      };
+      return map[aspect] || "ratio-portrait";
+    }
+
+    function detectPlatform(videoUrl) {
+      try {
+        const url = new URL(videoUrl);
+        const host = url.hostname.replace(/^www\./, "").toLowerCase();
+        if (host === "youtube.com" || host === "m.youtube.com" || host === "youtu.be") return "youtube";
+        if (host === "vimeo.com" || host === "player.vimeo.com") return "vimeo";
+      } catch (_) {}
+      return null;
+    }
+
     function createVimeoUrl(videoUrl) {
-      const cleanUrl = videoUrl.split('?')[0];
-      const params = videoUrl.includes('?') ? videoUrl.split('?')[1] : '';
-      // АВТОПЛЕЙ: autoplay=1 + muted=1 (обязательно для браузеров)
-      const baseParams = "title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&autoplay=1&muted=1&loop=1";
-      return params ? `${cleanUrl}?${params}&${baseParams}` : `${cleanUrl}?${baseParams}`;
-    }
+      try {
+        const url = new URL(videoUrl);
+        const id = url.pathname.split("/").filter(Boolean).pop();
+        if (!id) return videoUrl;
 
-    function loadAllVideos() {
-      videoLinks = [aiVideo, ...otherVideos];
-      const feed = document.getElementById('videoFeed');
-      
-      feed.innerHTML = videoLinks.map(video => `
-        <div class="video-card" data-id="${video.id}">
-          <button class="delete-btn" onclick="deleteVideo('${video.id}')">✕</button>
-          <div class="video-wrapper ${video.aspect}">
-            <iframe 
-              src="${createVimeoUrl(video.url)}" 
-              allow="autoplay; fullscreen; picture-in-picture; encrypted-media" 
-              allowfullscreen 
-              loading="lazy">
-            </iframe>
-          </div>
-          <div class="caption">${video.title}</div>
-        </div>
-      `).join('');
-    }
+        const embed = new URL(`https://player.vimeo.com/video/${id}`);
+        for (const [key, value] of url.searchParams.entries()) {
+          if (key === "h") embed.searchParams.set(key, value);
+        }
 
-    function saveVideos() { localStorage.setItem('polyanaVideos', JSON.stringify(otherVideos)); }
-
-    function addVideo() {
-      const url = document.getElementById('videoUrl').value.trim();
-      const title = document.getElementById('videoTitle').value.trim();
-      const aspect = document.getElementById('videoAspect').value;
-      if (!url || !title) { alert('Заполни ссылку и название!'); return; }
-      otherVideos.unshift({ url, title, aspect, id: Date.now().toString() });
-      saveVideos(); loadAllVideos(); updateVideoList();
-      document.getElementById('videoUrl').value = '';
-      document.getElementById('videoTitle').value = '';
-    }
-
-    function deleteVideo(id) {
-      if (id === 'ai') return;
-      if (confirm('Удалить это видео?')) {
-        otherVideos = otherVideos.filter(v => String(v.id) !== String(id));
-        saveVideos(); loadAllVideos(); updateVideoList();
+        embed.searchParams.set("title", "0");
+        embed.searchParams.set("byline", "0");
+        embed.searchParams.set("portrait", "0");
+        embed.searchParams.set("badge", "0");
+        embed.searchParams.set("dnt", "1");
+        embed.searchParams.set("playsinline", "1");
+        embed.searchParams.set("autoplay", "1");
+        embed.searchParams.set("muted", "1");
+        embed.searchParams.set("loop", "1");
+        return embed.toString();
+      } catch (_) {
+        return videoUrl;
       }
     }
 
-    function resetVideos() {
-      if(confirm('Это удалит все добавленные видео и вернет стандартный набор. Продолжить?')) {
-        localStorage.removeItem('polyanaVideos');
-        otherVideos = [...defaultVideos];
-        saveVideos(); loadAllVideos(); updateVideoList();
-        alert('Сброшено!');
+    function createYouTubeUrl(videoUrl) {
+      try {
+        const url = new URL(videoUrl);
+        let id = "";
+
+        if (url.hostname.replace(/^www\./, "") === "youtu.be") {
+          id = url.pathname.split("/").filter(Boolean)[0] || "";
+        } else {
+          id = url.searchParams.get("v") || "";
+          if (!id && url.pathname.includes("/embed/")) {
+            id = url.pathname.split("/embed/")[1].split("/")[0];
+          }
+          if (!id && url.pathname.includes("/shorts/")) {
+            id = url.pathname.split("/shorts/")[1].split("/")[0];
+          }
+        }
+
+        if (!id) return videoUrl;
+
+        const origin = encodeURIComponent(window.location.origin);
+        return `https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1&mute=1&loop=1&playlist=${encodeURIComponent(id)}&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&origin=${origin}`;
+      } catch (_) {
+        return videoUrl;
+      }
+    }
+
+    function createEmbedUrl(video) {
+      const platform = video.platform || detectPlatform(video.url);
+      return platform === "youtube"
+        ? createYouTubeUrl(video.url)
+        : createVimeoUrl(video.url);
+    }
+
+    async function fetchCloudVideos() {
+      try {
+        const response = await fetch(`${API_BASE}/videos`, { cache: "no-store" });
+        if (!response.ok) throw new Error("API unavailable");
+
+        const data = await response.json();
+        cloudVideos = Array.isArray(data.videos) ? data.videos : [];
+      } catch (error) {
+        console.error("Не удалось загрузить видео из Cloudflare:", error);
+        cloudVideos = [];
+      }
+
+      loadAllVideos();
+      updateVideoList();
+    }
+
+    function loadAllVideos() {
+      const videoLinks = [...cloudVideos, ...defaultVideos];
+      const feed = document.getElementById('videoFeed');
+
+      feed.innerHTML = videoLinks.map(video => {
+        const isCloudVideo = !String(video.id).match(/^(ai|svadba|sabotage|karma|underground|details|bar)$/);
+        return `
+          <div class="video-card" data-id="${escapeHtml(video.id)}">
+            ${isCloudVideo ? `<button class="delete-btn" onclick="deleteVideo('${String(video.id).replace(/'/g, "\\'")}')">✕</button>` : ""}
+            <div class="video-wrapper ${aspectClass(video.aspect)}">
+              <iframe
+                src="${escapeHtml(createEmbedUrl(video))}"
+                title="${escapeHtml(video.title || "Video")}"
+                allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                allowfullscreen
+                loading="lazy">
+              </iframe>
+            </div>
+            <div class="caption">${escapeHtml(video.title || "VIDEO")}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function addVideo() {
+      const url = document.getElementById('videoUrl').value.trim();
+      const title = document.getElementById('videoTitle').value.trim();
+      const aspect = document.getElementById('videoAspect').value;
+
+      if (!url || !title) {
+        alert('Заполни ссылку и название!');
+        return;
+      }
+
+      if (!adminSecret) {
+        alert('Сначала войди в панель управления.');
+        return;
+      }
+
+      const platform = detectPlatform(url);
+      if (!platform) {
+        alert('Разрешены только ссылки YouTube и Vimeo.');
+        return;
+      }
+
+      const button = document.querySelector('.add-btn');
+      const oldText = button.textContent;
+      button.textContent = 'ДОБАВЛЯЮ...';
+      button.disabled = true;
+
+      try {
+        const response = await fetch(`${API_BASE}/videos`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${adminSecret}`
+          },
+          body: JSON.stringify({
+            url,
+            title,
+            aspect
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || "Ошибка добавления");
+        }
+
+        document.getElementById('videoUrl').value = '';
+        document.getElementById('videoTitle').value = '';
+
+        await fetchCloudVideos();
+      } catch (error) {
+        alert(`Ошибка: ${error.message}`);
+      } finally {
+        button.textContent = oldText;
+        button.disabled = false;
+      }
+    }
+
+    async function deleteVideo(id) {
+      if (!adminSecret) return;
+      if (!confirm('Удалить это видео у всех посетителей сайта?')) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/videos/${encodeURIComponent(id)}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${adminSecret}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || "Ошибка удаления");
+        }
+
+        await fetchCloudVideos();
+      } catch (error) {
+        alert(`Ошибка: ${error.message}`);
       }
     }
 
     function updateVideoList() {
       const list = document.getElementById('videoList');
-      if (otherVideos.length === 0) {
-        list.innerHTML = '<p style="text-align:center;color:#999;">Нет видео</p>'; return;
+
+      if (cloudVideos.length === 0) {
+        list.innerHTML = '<p style="text-align:center;color:#999;">Пока нет добавленных через Cloudflare видео</p>';
+        return;
       }
-      list.innerHTML = otherVideos.map(video => `
+
+      list.innerHTML = cloudVideos.map(video => `
         <div class="video-list-item">
           <div class="video-list-item-info">
-            <div class="video-list-item-title">${video.title}</div>
-            <div class="video-list-item-url">${video.url}</div>
+            <div class="video-list-item-title">${escapeHtml(video.title || "VIDEO")}</div>
+            <div class="video-list-item-url">${escapeHtml(video.url)}</div>
           </div>
-          <button class="video-list-item-delete" onclick="deleteVideo('${video.id}')">✕</button>
+          <button class="video-list-item-delete" onclick="deleteVideo('${String(video.id).replace(/'/g, "\\'")}')">✕</button>
         </div>
       `).join('');
+    }
+
+    async function verifySecret(secret) {
+      // Безопасная проверка: не удаляет реальное видео.
+      const response = await fetch(`${API_BASE}/videos/__auth_check__`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${secret}`
+        }
+      });
+
+      // 404 означает: секрет верный, но такого видео нет.
+      return response.status === 404;
     }
 
     function openPassword() {
       document.getElementById('passwordPanel').classList.add('active');
       setTimeout(() => document.getElementById('passwordInput').focus(), 100);
     }
+
     function closePassword() {
       document.getElementById('passwordPanel').classList.remove('active');
       document.getElementById('passwordInput').value = '';
       document.getElementById('errorMessage').style.display = 'none';
     }
-    function checkPassword() {
-      if (document.getElementById('passwordInput').value === PASSWORD) {
-        closePassword(); openAdmin();
-      } else {
+
+    async function checkPassword() {
+      const input = document.getElementById('passwordInput');
+      const secret = input.value.trim();
+
+      if (!secret) return;
+
+      const button = document.querySelector('.password-btn');
+      const oldText = button.textContent;
+      button.textContent = 'ПРОВЕРКА...';
+      button.disabled = true;
+
+      try {
+        const ok = await verifySecret(secret);
+
+        if (!ok) throw new Error("Неверный пароль");
+
+        adminSecret = secret;
+        closePassword();
+        openAdmin();
+      } catch (_) {
         document.getElementById('errorMessage').style.display = 'block';
-        document.getElementById('passwordInput').value = '';
-        setTimeout(() => { document.getElementById('errorMessage').style.display = 'none'; }, 2000);
+        input.value = '';
+        setTimeout(() => {
+          document.getElementById('errorMessage').style.display = 'none';
+        }, 2500);
+      } finally {
+        button.textContent = oldText;
+        button.disabled = false;
       }
     }
+
     function openAdmin() {
       document.getElementById('adminPanel').classList.add('active');
       document.body.classList.add('admin-mode');
       updateVideoList();
     }
+
     function closeAdmin() {
       document.getElementById('adminPanel').classList.remove('active');
       document.body.classList.remove('admin-mode');
+      adminSecret = "";
     }
 
+    // Оставляем старые кнопки экспорта/импорта скрытыми от логики,
+    // потому что источником данных теперь является Cloudflare KV.
     function exportData() {
-      const blob = new Blob([JSON.stringify(otherVideos, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-      a.download = 'polyana-videos.json'; a.click();
+      const blob = new Blob([JSON.stringify(cloudVideos, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'polyana-cloud-videos.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
     }
-    function importData(event) {
-      const file = event.target.files[0]; if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const data = JSON.parse(e.target.result);
-          if (Array.isArray(data)) { otherVideos = data; saveVideos(); loadAllVideos(); updateVideoList(); alert('Готово!'); }
-        } catch (err) { alert('Ошибка файла'); }
-      };
-      reader.readAsText(file);
+
+    function importData() {
+      alert('Импорт отключен: теперь видео добавляются напрямую ссылкой через Cloudflare.');
+    }
+
+    function resetVideos() {
+      alert('Сброс отключен, чтобы случайно не удалить общее портфолио. Удаляй нужные видео кнопкой ✕.');
     }
 
     document.getElementById('logoIcon').addEventListener('click', function() {
       logoClickCount++;
       if (logoClickTimer) clearTimeout(logoClickTimer);
       logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 600);
-      if (logoClickCount >= 3) { logoClickCount = 0; openPassword(); }
+
+      if (logoClickCount >= 3) {
+        logoClickCount = 0;
+        openPassword();
+      }
     });
 
     document.getElementById('passwordInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') checkPassword();
     });
 
-    document.addEventListener('DOMContentLoaded', loadAllVideos);
+    document.addEventListener('DOMContentLoaded', fetchCloudVideos);
   </script>
 </body>
 </html>
