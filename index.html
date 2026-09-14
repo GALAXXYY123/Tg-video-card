@@ -2245,4 +2245,332 @@
         "polyana-videos.json";
 
 
-      a
+      a.click();
+
+
+      URL.revokeObjectURL(
+        a.href
+      );
+
+    }
+
+
+    // ======================================
+    // IMPORT
+    // ======================================
+
+    async function importData(event) {
+
+      const file =
+        event.target.files[0];
+
+
+      if (!file) {
+        return;
+      }
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        async function(e) {
+
+          try {
+
+            const data =
+              JSON.parse(
+                e.target.result
+              );
+
+
+            if (!Array.isArray(data)) {
+
+              alert(
+                "Неверный JSON файл"
+              );
+
+              return;
+
+            }
+
+
+            if (
+              !confirm(
+                "Импорт добавит видео в Cloudflare. Продолжить?"
+              )
+            ) {
+              return;
+            }
+
+
+            for (
+              const video of data
+            ) {
+
+              await apiRequest(
+                "/videos",
+                {
+                  method: "POST",
+
+                  body:
+                    JSON.stringify({
+                      url:
+                        video.url,
+
+                      title:
+                        video.title ||
+                        "Без названия",
+
+                      aspect:
+                        video.aspect ||
+                        "9:16",
+
+                      addedAfterAnchor:
+                        !!video.addedAfterAnchor
+                    })
+                }
+              );
+
+            }
+
+
+            await loadAllVideos();
+
+
+            alert(
+              "Импорт завершён!"
+            );
+
+
+          } catch (error) {
+
+            alert(
+              "Ошибка импорта: " +
+              error.message
+            );
+
+          }
+
+        };
+
+
+      reader.readAsText(file);
+
+    }
+
+
+    // ======================================
+    // PASSWORD
+    // ======================================
+
+    function openPassword() {
+
+      document
+        .getElementById("passwordPanel")
+        .classList.add("active");
+
+
+      setTimeout(
+        () => {
+
+          document
+            .getElementById("passwordInput")
+            .focus();
+
+        },
+        100
+      );
+
+    }
+
+
+    function closePassword() {
+
+      document
+        .getElementById("passwordPanel")
+        .classList.remove("active");
+
+
+      document
+        .getElementById("passwordInput")
+        .value = "";
+
+
+      document
+        .getElementById("errorMessage")
+        .style.display =
+          "none";
+
+    }
+
+
+    function checkPassword() {
+
+      const password =
+        document
+          .getElementById("passwordInput")
+          .value;
+
+
+      if (
+        password === ADMIN_SECRET
+      ) {
+
+        closePassword();
+
+        openAdmin();
+
+      } else {
+
+        document
+          .getElementById("errorMessage")
+          .style.display =
+            "block";
+
+
+        document
+          .getElementById("passwordInput")
+          .value =
+            "";
+
+
+        setTimeout(
+          () => {
+
+            document
+              .getElementById("errorMessage")
+              .style.display =
+                "none";
+
+          },
+          2000
+        );
+
+      }
+
+    }
+
+
+    // ======================================
+    // ADMIN
+    // ======================================
+
+    function openAdmin() {
+
+      document
+        .getElementById("adminPanel")
+        .classList.add("active");
+
+
+      document.body
+        .classList.add("admin-mode");
+
+
+      updateVideoList();
+
+    }
+
+
+    function closeAdmin() {
+
+      document
+        .getElementById("adminPanel")
+        .classList.remove("active");
+
+
+      document.body
+        .classList.remove("admin-mode");
+
+
+      cancelEdit();
+
+    }
+
+
+    // ======================================
+    // LOGO 3 CLICKS
+    // ======================================
+
+    document
+      .getElementById("logoIcon")
+      .addEventListener(
+        "click",
+        function() {
+
+          logoClickCount++;
+
+
+          if (logoClickTimer) {
+
+            clearTimeout(
+              logoClickTimer
+            );
+
+          }
+
+
+          logoClickTimer =
+            setTimeout(
+              () => {
+
+                logoClickCount = 0;
+
+              },
+              700
+            );
+
+
+          if (
+            logoClickCount >= 3
+          ) {
+
+            logoClickCount = 0;
+
+            openPassword();
+
+          }
+
+        }
+      );
+
+
+    // ======================================
+    // ENTER PASSWORD
+    // ======================================
+
+    document
+      .getElementById("passwordInput")
+      .addEventListener(
+        "keypress",
+        function(e) {
+
+          if (
+            e.key === "Enter"
+          ) {
+
+            checkPassword();
+
+          }
+
+        }
+      );
+
+
+    // ======================================
+    // START
+    // ======================================
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      loadAllVideos
+    );
+
+
+  </script>
+
+
+</body>
+
+</html>
