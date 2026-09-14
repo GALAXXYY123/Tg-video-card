@@ -1267,6 +1267,14 @@
 
 
     // ======================================
+    // ЯКОРЬ
+    // ======================================
+
+    const ANCHOR_TITLE =
+      "AI Motion / Experimental";
+
+
+    // ======================================
     // STATE
     // ======================================
 
@@ -1342,6 +1350,78 @@
 
 
     // ======================================
+    // ЯКОРЬ: сравнение
+    // ======================================
+
+    function isAnchor(video) {
+
+      return (
+        String(video && video.title || "")
+          .trim()
+          .toLowerCase() ===
+        ANCHOR_TITLE.toLowerCase()
+      );
+
+    }
+
+
+    // ======================================
+    // REORDER: новое — сразу после якоря
+    // ======================================
+
+    function reorderAroundAnchor(list) {
+
+      if (!Array.isArray(list) || !list.length) {
+        return list;
+      }
+
+
+      const anchorIndex =
+        list.findIndex(isAnchor);
+
+
+      if (anchorIndex === -1) {
+        return list;
+      }
+
+
+      const anchor =
+        list[anchorIndex];
+
+
+      const before =
+        list.slice(0, anchorIndex);
+
+
+      const after =
+        list.slice(anchorIndex + 1);
+
+
+      // Новые = те, что помечены флагом
+      const newer =
+        after.filter(
+          v => v && v.addedAfterAnchor
+        );
+
+
+      // Старые = всё остальное
+      const older =
+        after.filter(
+          v => !(v && v.addedAfterAnchor)
+        );
+
+
+      return [
+        ...before,
+        anchor,
+        ...newer,
+        ...older
+      ];
+
+    }
+
+
+    // ======================================
     // ЗАГРУЗИТЬ ВИДЕО
     // ======================================
 
@@ -1374,6 +1454,11 @@
 
         videos =
           result.videos || [];
+
+
+        // Применяем порядок "новое — после якоря"
+        videos =
+          reorderAroundAnchor(videos);
 
 
         renderVideos();
@@ -1484,7 +1569,6 @@
 
       if (video.platform === "rutube") {
 
-        // Уже embed
         if (url.includes("/play/embed/")) {
           return url;
         }
@@ -1519,13 +1603,8 @@
 
       if (video.platform === "vk") {
 
-        // Если уже embed-ссылка
+        if (url.includes("video_ext.php")) {
 
-        if (
-          url.includes("video_ext.php")
-        ) {
-
-          // Добавим автоплей/мут, если их нет
           let vkUrl = url;
 
           if (!vkUrl.includes("autoplay=")) {
@@ -1546,10 +1625,6 @@
 
         }
 
-
-        // Обычная VK ссылка
-        // Например:
-        // vk.com/video-123_456
 
         const match =
           url.match(
@@ -1771,6 +1846,16 @@
 
         if (editingVideoId) {
 
+          // При редактировании флаг не трогаем —
+          // сохраняем как было
+          const existing =
+            videos.find(
+              v =>
+                String(v.id) ===
+                String(editingVideoId)
+            );
+
+
           await apiRequest(
             "/videos/" +
             encodeURIComponent(
@@ -1783,7 +1868,12 @@
                 JSON.stringify({
                   url,
                   title,
-                  aspect
+                  aspect,
+
+                  addedAfterAnchor:
+                    existing
+                      ? !!existing.addedAfterAnchor
+                      : false
                 })
             }
           );
@@ -1798,6 +1888,8 @@
 
         } else {
 
+          // Новое видео — помечаем флагом,
+          // чтобы оно встало сразу после якоря
           await apiRequest(
             "/videos",
             {
@@ -1807,7 +1899,9 @@
                 JSON.stringify({
                   url,
                   title,
-                  aspect
+                  aspect,
+
+                  addedAfterAnchor: true
                 })
             }
           );
@@ -2151,132 +2245,4 @@
         "polyana-videos.json";
 
 
-      a.click();
-
-
-      URL.revokeObjectURL(
-        a.href
-      );
-
-    }
-
-
-    // ======================================
-    // IMPORT
-    // ======================================
-
-    async function importData(event) {
-
-      const file =
-        event.target.files[0];
-
-
-      if (!file) {
-        return;
-      }
-
-
-      const reader =
-        new FileReader();
-
-
-      reader.onload =
-        async function(e) {
-
-          try {
-
-            const data =
-              JSON.parse(
-                e.target.result
-              );
-
-
-            if (!Array.isArray(data)) {
-
-              alert(
-                "Неверный JSON файл"
-              );
-
-              return;
-
-            }
-
-
-            if (
-              !confirm(
-                "Импорт добавит видео в Cloudflare. Продолжить?"
-              )
-            ) {
-              return;
-            }
-
-
-            for (
-              const video of data
-            ) {
-
-              await apiRequest(
-                "/videos",
-                {
-                  method: "POST",
-
-                  body:
-                    JSON.stringify({
-                      url:
-                        video.url,
-
-                      title:
-                        video.title ||
-                        "Без названия",
-
-                      aspect:
-                        video.aspect ||
-                        "9:16"
-                    })
-                }
-              );
-
-            }
-
-
-            await loadAllVideos();
-
-
-            alert(
-              "Импорт завершён!"
-            );
-
-
-          } catch (error) {
-
-            alert(
-              "Ошибка импорта: " +
-              error.message
-            );
-
-          }
-
-        };
-
-
-      reader.readAsText(file);
-
-    }
-
-
-    // ======================================
-    // PASSWORD
-    // ======================================
-
-    function openPassword() {
-
-      document
-        .getElementById("passwordPanel")
-        .classList.add("active");
-
-
-      setTimeout(
-        () => {
-
-          document
-            .getElementById("passwordInput")
+      a
