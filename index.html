@@ -1484,9 +1484,16 @@
 
       if (video.platform === "rutube") {
 
+        // Уже embed
+        if (url.includes("/play/embed/")) {
+          return url;
+        }
+
+
+        // rutube.ru/video/ID  ИЛИ  rutube.ru/shorts/ID
         const match =
           url.match(
-            /rutube\.ru\/video\/([a-zA-Z0-9]+)/i
+            /rutube\.ru\/(?:video|shorts)\/([a-zA-Z0-9]+)/i
           );
 
 
@@ -1494,7 +1501,8 @@
 
           return (
             "https://rutube.ru/play/embed/" +
-            match[1]
+            match[1] +
+            "?autoplay=1&muted=1&loop=1"
           );
 
         }
@@ -1517,7 +1525,24 @@
           url.includes("video_ext.php")
         ) {
 
-          return url;
+          // Добавим автоплей/мут, если их нет
+          let vkUrl = url;
+
+          if (!vkUrl.includes("autoplay=")) {
+            vkUrl +=
+              (vkUrl.includes("?") ? "&" : "?") +
+              "autoplay=1";
+          }
+
+          if (!vkUrl.includes("muted=")) {
+            vkUrl += "&muted=1";
+          }
+
+          if (!vkUrl.includes("loop=")) {
+            vkUrl += "&loop=1";
+          }
+
+          return vkUrl;
 
         }
 
@@ -1546,7 +1571,9 @@
             "?oid=" + oid +
             "&id=" + id +
             "&hd=2" +
-            "&autoplay=1"
+            "&autoplay=1" +
+            "&muted=1" +
+            "&loop=1"
           );
 
         }
@@ -2253,200 +2280,3 @@
 
           document
             .getElementById("passwordInput")
-            .focus();
-
-        },
-        100
-      );
-
-    }
-
-
-    function closePassword() {
-
-      document
-        .getElementById("passwordPanel")
-        .classList.remove("active");
-
-
-      document
-        .getElementById("passwordInput")
-        .value = "";
-
-
-      document
-        .getElementById("errorMessage")
-        .style.display =
-          "none";
-
-    }
-
-
-    function checkPassword() {
-
-      const password =
-        document
-          .getElementById("passwordInput")
-          .value;
-
-
-      if (
-        password === ADMIN_SECRET
-      ) {
-
-        closePassword();
-
-        openAdmin();
-
-      } else {
-
-        document
-          .getElementById("errorMessage")
-          .style.display =
-            "block";
-
-
-        document
-          .getElementById("passwordInput")
-          .value =
-            "";
-
-
-        setTimeout(
-          () => {
-
-            document
-              .getElementById("errorMessage")
-              .style.display =
-                "none";
-
-          },
-          2000
-        );
-
-      }
-
-    }
-
-
-    // ======================================
-    // ADMIN
-    // ======================================
-
-    function openAdmin() {
-
-      document
-        .getElementById("adminPanel")
-        .classList.add("active");
-
-
-      document.body
-        .classList.add("admin-mode");
-
-
-      updateVideoList();
-
-    }
-
-
-    function closeAdmin() {
-
-      document
-        .getElementById("adminPanel")
-        .classList.remove("active");
-
-
-      document.body
-        .classList.remove("admin-mode");
-
-
-      cancelEdit();
-
-    }
-
-
-    // ======================================
-    // LOGO 3 CLICKS
-    // ======================================
-
-    document
-      .getElementById("logoIcon")
-      .addEventListener(
-        "click",
-        function() {
-
-          logoClickCount++;
-
-
-          if (logoClickTimer) {
-
-            clearTimeout(
-              logoClickTimer
-            );
-
-          }
-
-
-          logoClickTimer =
-            setTimeout(
-              () => {
-
-                logoClickCount = 0;
-
-              },
-              700
-            );
-
-
-          if (
-            logoClickCount >= 3
-          ) {
-
-            logoClickCount = 0;
-
-            openPassword();
-
-          }
-
-        }
-      );
-
-
-    // ======================================
-    // ENTER PASSWORD
-    // ======================================
-
-    document
-      .getElementById("passwordInput")
-      .addEventListener(
-        "keypress",
-        function(e) {
-
-          if (
-            e.key === "Enter"
-          ) {
-
-            checkPassword();
-
-          }
-
-        }
-      );
-
-
-    // ======================================
-    // START
-    // ======================================
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      loadAllVideos
-    );
-
-
-  </script>
-
-
-</body>
-
-</html>
